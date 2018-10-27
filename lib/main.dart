@@ -1,55 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
 
+import 'package:http/http.dart' as http;
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:html/parser.dart' show parse;
+import 'package:html/dom.dart' as dom;
+
 void main() => runApp(new MyApp());
 
-class MyApp extends StatelessWidget {
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Startup Name Generator',
-      home: RandomWords(),
-    );
-  }
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return MaterialApp(
-  //     title: 'Welcome to Flutter',
-  //     home: Scaffold(
-  //       appBar: AppBar(
-  //         title: Text('Welcome to Flutter'),
-  //       ),
-  //       body: Center(
-  //           // child: Text('Hello World'),
-  //           child: RandomWords()),
-  //     ),
-  //   );
-  // }
-}
-
 // class MyApp extends StatelessWidget {
-//   // This widget is the root of your application.
 //   @override
 //   Widget build(BuildContext context) {
-//     return new MaterialApp(
-//       title: 'Flutter Demo',
+//     return MaterialApp(
+//       title: '커뮤니티 모아보기',
 //       theme: new ThemeData(
-//         // This is the theme of your application.
-//         //
-//         // Try running your application with "flutter run". You'll see the
-//         // application has a blue toolbar. Then, without quitting the app, try
-//         // changing the primarySwatch below to Colors.green and then invoke
-//         // "hot reload" (press "r" in the console where you ran "flutter run",
-//         // or press Run > Flutter Hot Reload in IntelliJ). Notice that the
-//         // counter didn't reset back to zero; the application is not restarted.
-//         primarySwatch: Colors.blue,
+//         primaryColor: Colors.white,
 //       ),
-//       home: new MyHomePage(title: 'Flutter Demo Home Page'),
+//       home: RandomWords(),
 //     );
 //   }
 // }
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Fetch Data Example',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Fetch Data Example'),
+        ),
+        body: Center(
+          child: FutureBuilder<String>(
+            future: fetchPost(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Text(snapshot.data);
+              } else if (snapshot.hasError) {
+                return Text("${snapshot.error}");
+              }
+
+              // By default, show a loading spinner
+              return CircularProgressIndicator();
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
@@ -136,8 +140,9 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class RandomWordsState extends State<RandomWords> {
-  final _suggestions = <WordPair>[];
-  final _biggerFont = const TextStyle(fontSize: 18.0);
+  final List<WordPair> _suggestions = <WordPair>[];
+  final Set<WordPair> _saved = new Set<WordPair>(); // Add this line.
+  final TextStyle _biggerFont = const TextStyle(fontSize: 18.0);
 
   Widget _buildSuggestions() {
     return ListView.builder(
@@ -167,11 +172,27 @@ class RandomWordsState extends State<RandomWords> {
   }
 
   Widget _buildRow(WordPair pair) {
-    return ListTile(
-      title: Text(
+    final bool alreadySaved = _saved.contains(pair);
+    return new ListTile(
+      title: new Text(
         pair.asPascalCase,
         style: _biggerFont,
       ),
+      trailing: new Icon(
+        // Add the lines from here...
+        alreadySaved ? Icons.favorite : Icons.favorite_border,
+        color: alreadySaved ? Colors.red : null,
+      ), // ... to here.
+      onTap: () {
+        // Add 9 lines from here...
+        setState(() {
+          if (alreadySaved) {
+            _saved.remove(pair);
+          } else {
+            _saved.add(pair);
+          }
+        });
+      },
     );
   }
 
@@ -179,9 +200,44 @@ class RandomWordsState extends State<RandomWords> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Startup Name Generator'),
+        title: Text('커뮤니티 모아보기'),
+        actions: <Widget>[
+          // Add 3 lines from here...
+          new IconButton(icon: const Icon(Icons.list), onPressed: _pushSaved),
+        ], // ... to here.
       ),
       body: _buildSuggestions(),
+    );
+  }
+
+  void _pushSaved() {
+    Navigator.of(context).push(
+      new MaterialPageRoute<void>(
+        builder: (BuildContext context) {
+          final Iterable<ListTile> tiles = _saved.map(
+            (WordPair pair) {
+              return new ListTile(
+                title: new Text(
+                  pair.asPascalCase,
+                  style: _biggerFont,
+                ),
+              );
+            },
+          );
+          final List<Widget> divided = ListTile.divideTiles(
+            context: context,
+            tiles: tiles,
+          ).toList();
+
+          return new Scaffold(
+            // Add 6 lines from here...
+            appBar: new AppBar(
+              title: const Text('Saved Suggestions'),
+            ),
+            body: new ListView(children: divided),
+          ); // ... to here.
+        },
+      ),
     );
   }
 }
@@ -190,3 +246,44 @@ class RandomWords extends StatefulWidget {
   @override
   RandomWordsState createState() => new RandomWordsState();
 }
+
+class Post {
+  final int userId;
+  final int id;
+  final String title;
+  final String body;
+
+  Post({this.userId, this.id, this.title, this.body});
+
+  factory Post.fromJson(Map<String, dynamic> json) {
+    return Post(
+      userId: json['userId'],
+      id: json['id'],
+      title: json['title'],
+      body: json['body'],
+    );
+  }
+}
+
+// Future<Post> fetchPost() async {
+  Future<String> fetchPost() async {
+  final response =
+      // await http.get('https://jsonplaceholder.typicode.com/posts/1');
+      await http.get('http://m.ppomppu.co.kr/new/');
+
+  if (response.statusCode == 200) {
+    // If the call to the server was successful, parse the JSON
+    var document = parse(response.body);
+    var mainList = document.getElementById("mainList").children.first.children.toString();
+    
+    return mainList;
+    // return Post.fromJson(json.decode(response.body));
+  } else {
+    // If that call was not successful, throw an error.
+    throw Exception('Failed to load post');
+  }
+}
+
+
+
+

@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1004463328389",
+    "firebase_url": "https://commo-932e2.firebaseio.com",
+    "project_id": "commo-932e2",
+    "storage_bucket": "commo-932e2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1004463328389:android:b73d7359acec2254",
+        "android_client_info": {
+          "package_name": "com.bgcompany.commo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1004463328389-jlkilu4f1gjoojc7oh59f3i1bhn2spl2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgr90nq0DxCcMm6B6ZsFjx7IqzLFV90m4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
