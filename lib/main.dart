@@ -8,6 +8,8 @@ import 'dart:convert' show Codec;
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart' as dom;
 
+import 'package:flutter_inappbrowser/flutter_inappbrowser.dart';
+
 void main() => runApp(new CoMMoApp());
 
 class CoMMoApp extends StatelessWidget {
@@ -18,48 +20,87 @@ class CoMMoApp extends StatelessWidget {
       theme: new ThemeData(
         primaryColor: Colors.white,
       ),
-      home: Scaffold(
+      home: PostingBunch(),
+    );
+  } //build
+} // app
+
+class PostingBunchState extends State<PostingBunch> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
         appBar: AppBar(
           title: Text('컴모 - 커뮤니티 모아보기'),
         ),
-        body: Center(
-          child: FutureBuilder<List<Post>>(
-            future: fetchPost("MLB"),
-            // future: fetchPostTest(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                // return Text(snapshot.data.toString());
-                return buildList(snapshot.data);
-              } else if (snapshot.hasError) {
-                return Text("${snapshot.error}");
-              }
+        body: _buildPost());
+  }
 
-              // By default, show a loading spinner
-              return CircularProgressIndicator();
-            },
-          ),
-        ),
+  Widget _buildPost() {
+    return Center(
+      child: FutureBuilder<List<Post>>(
+        future: fetchPost("INVEN"),
+        // future: fetchPostTest(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            // return Text(snapshot.data.toString());
+            return _buildList(snapshot.data);
+          } else if (snapshot.hasError) {
+            return Text("${snapshot.error}");
+          }
+          // By default, show a loading spinner
+          return CircularProgressIndicator();
+        },
       ),
     );
   }
-}
 
-  Widget buildList(List<Post> posts) {
+  Widget _buildList(List<Post> posts) {
     return ListView.builder(
         padding: const EdgeInsets.all(16.0),
         itemBuilder: (context, i) {
           if (i.isOdd) return Divider();
-          return buildRow(posts[i]);
+          return _buildRow(posts[i]);
         });
   }
 
-  Widget buildRow(Post post) {
+  Widget _buildRow(Post post) {
     return new ListTile(
       title: new Text(
         "[" + post.reference + "] " + post.title,
       ),
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => SecondScreen(title:post.title))
+          );
+      },
     );
   }
+}
+
+class PostingBunch extends StatefulWidget {
+  @override
+  PostingBunchState createState() => new PostingBunchState();
+}
+
+class SecondScreen extends StatelessWidget {
+
+  final String title;
+
+  SecondScreen({Key key, @required this.title}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Second Screen"),
+      ),
+      body: Center(
+        child: Text("webview here")
+      ),
+    );
+  }
+}
 
 class Post {
   final String title;
@@ -73,57 +114,6 @@ class Post {
   }
 }
 
-
-class PostingBunchState extends State<PostingBunch> {
-
-  final TextStyle _biggerFont = const TextStyle(fontSize: 18.0);
-
-  final List<Post> _posts = <Post>[];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('커뮤니티 모아보기'),
-        actions: <Widget>[
-          // Add 3 lines from here...
-          // new IconButton(icon: const Icon(Icons.list), onPressed: _pushSaved),
-        ], // ... to here.
-      ),
-      body: _buildList(),
-    );
-  }
-
-  Widget _buildList() {
-    return ListView.builder(
-        padding: const EdgeInsets.all(16.0),
-        itemBuilder: (context, i) {
-          if (i.isOdd) return Divider();
-          final index = i ~/ 2;
-          if (index >= _posts.length) {
-            // _posts.addAll(generate().take(10));
-          }
-        });
-  }
-
-  Widget _buildRow(Post post) {
-    return new ListTile(
-      title: new Text(
-        "[" + post.reference + "] " + post.title,
-        style: _biggerFont,
-      ),
-    );
-  }
-
-
-}
-
-class PostingBunch extends StatefulWidget {
-  @override
-  PostingBunchState createState() => new PostingBunchState();
-}
-
-
 // 뽐뿌
 // Future<List<Post>> fetchPostTest() async {
 //   final response = await http.get('http://m.ppomppu.co.kr/new/');
@@ -132,7 +122,7 @@ class PostingBunch extends StatefulWidget {
 //     // If the call to the server was successful, parse the JSON
 //     var document = parse( response.body );
 
-//     var aa = response.bodyBytes;    
+//     var aa = response.bodyBytes;
 
 //     var list = document.getElementById("mainList").children.first.children;
 
@@ -146,13 +136,12 @@ class PostingBunch extends StatefulWidget {
 
 // Future<Post> fetchPost() async {
 Future<List<Post>> fetchPost(String site) async {
-
   var url = "http://www.slrclub.com/bbs/zboard.php?id=hot_article";
 
 //뽐뿌같은경우 Encoding이 안맞음
 //보배는 이상하게 깨짐 (utf가 meta에 없는것처럼 보임.)
 
-  switch(site) {
+  switch (site) {
     case 'SLR':
       url = "http://www.slrclub.com/bbs/zboard.php?id=hot_article";
       break;
@@ -161,66 +150,70 @@ Future<List<Post>> fetchPost(String site) async {
       break;
     case 'RULIWEB':
       url = "https://m.ruliweb.com/best";
-      break;  
+      break;
     case 'BOBAE':
       url = "http://m.bobaedream.co.kr/board/new_writing/best";
-      break;  
+      break;
     case 'FM':
       url = "https://m.fmkorea.com/best";
-      break;  
+      break;
     case 'UNIV':
       url = "http://m.humoruniv.com/board/list.html?table=pds";
-      break;  
+      break;
     case 'DOGDRIP':
       url = "https://www.dogdrip.net/dogdrip";
-      break;  
+      break;
     case 'NATE':
       url = "https://m.pann.nate.com/talk/today/";
-      break;  
-   case 'CLIEN':
+      break;
+    case 'CLIEN':
       url = "https://m.clien.net/service/group/clien_all?&od=T33";
-      break;  
-   case 'FOMOS':
+      break;
+    case 'FOMOS':
       url = "http://m.fomos.kr/talk/article_list?bbs_id=1";
-      break;  
-   case 'MLB':
+      break;
+    case 'MLB':
       url = "http://mlbpark.donga.com/mlbpark/b.php?b=bullpen";
-      break;  
+      break;
   }
-  
+
   final response = await http.get(url);
 
   if (response.statusCode == 200) {
-    
-    var document = parse(utf8.decode(response.bodyBytes ));
-    
-    switch(site) {
+    var document = parse(utf8.decode(response.bodyBytes));
 
+    switch (site) {
       case 'SLR':
-        var list = document.getElementById("bbs_list").getElementsByClassName("sbj");
+        var list =
+            document.getElementById("bbs_list").getElementsByClassName("sbj");
         var resultList = <Post>[];
-        for (var i = 0 ; i < list.length ; i++) {
+        for (var i = 0; i < list.length; i++) {
           try {
             var post = list[i].getElementsByTagName("a").first.text.trim();
             var reference = "SLR클럽";
-            var url = "http://www.slrclub.com/bbs/zboard.php?id=hot_article" + list[i].getElementsByTagName("a").first.attributes["href"];
+            var url = "http://www.slrclub.com/bbs/zboard.php?id=hot_article" +
+                list[i].getElementsByTagName("a").first.attributes["href"];
             resultList.add(Post.fromString(post, reference, url));
           } catch (e) {
             print(e.toString());
           }
         }
         return resultList.toList();
-        break;        
+        break;
 
       //TODO: [공지]같은 앞의 태그 없애야함.
       case 'INVEN':
-        var list = document.getElementById("boardList").getElementsByClassName("articleSubject");
+        var list = document
+            .getElementById("boardList")
+            .getElementsByClassName("articleSubject");
         var resultList = <Post>[];
-        for (var i = 0 ; i < list.length ; i++) {
+        for (var i = 0; i < list.length; i++) {
           try {
-            var post = list[i].getElementsByClassName("title").first.text.trim();
+            var post =
+                list[i].getElementsByClassName("title").first.text.trim();
             var reference = "인벤";
-            var url = "http://m.inven.co.kr" + list[i].getElementsByTagName("a").first.attributes["href"];
+            var url = "http://m.inven.co.kr" +
+                list[i].getElementsByTagName("a").first.attributes["href"];
             resultList.add(Post.fromString(post, reference, url));
           } catch (e) {
             print(e.toString());
@@ -231,13 +224,20 @@ Future<List<Post>> fetchPost(String site) async {
 
       //
       case 'RULIWEB':
-        var list = document.getElementById("board_list").getElementsByClassName("title");
+        var list = document
+            .getElementById("board_list")
+            .getElementsByClassName("title");
         var resultList = <Post>[];
-        for (var i = 0 ; i < list.length ; i++) {
+        for (var i = 0; i < list.length; i++) {
           try {
-            var post = list[i].getElementsByClassName("subject_link").first.text.trim();
+            var post = list[i]
+                .getElementsByClassName("subject_link")
+                .first
+                .text
+                .trim();
             var reference = "루리웹";
-            var url = list[i].getElementsByTagName("a").first.attributes["href"];
+            var url =
+                list[i].getElementsByTagName("a").first.attributes["href"];
             resultList.add(Post.fromString(post, reference, url));
           } catch (e) {
             print(e.toString());
@@ -248,13 +248,17 @@ Future<List<Post>> fetchPost(String site) async {
 
       //뭔가 몇개가 빠져서 들어오고 있음.
       case 'BOBAE':
-        var list = document.getElementsByClassName("rank").first.getElementsByClassName("info");
+        var list = document
+            .getElementsByClassName("rank")
+            .first
+            .getElementsByClassName("info");
         var resultList = <Post>[];
-        for (var i = 0 ; i < list.length ; i++) {
+        for (var i = 0; i < list.length; i++) {
           try {
             var post = list[i].getElementsByClassName("cont").first.text.trim();
             var reference = "보배드림";
-            var url = "http://m.bobaedream.co.kr/board/new_writing/best" + list[i].getElementsByTagName("a").first.attributes["href"];
+            var url = "http://m.bobaedream.co.kr/board/new_writing/best" +
+                list[i].getElementsByTagName("a").first.attributes["href"];
             resultList.add(Post.fromString(post, reference, url));
           } catch (e) {
             print(e.toString());
@@ -265,13 +269,18 @@ Future<List<Post>> fetchPost(String site) async {
 
       //작동안하는듯
       case 'FM':
-        var list = document.getElementsByClassName("fm_best_widget").first.getElementsByClassName("li");
+        var list = document
+            .getElementsByClassName("fm_best_widget")
+            .first
+            .getElementsByClassName("li");
         var resultList = <Post>[];
-        for (var i = 0 ; i < list.length ; i++) {
+        for (var i = 0; i < list.length; i++) {
           try {
-            var post = list[i].getElementsByClassName("read_more").first.text.trim();
+            var post =
+                list[i].getElementsByClassName("read_more").first.text.trim();
             var reference = "FM";
-            var url = "https://m.fmkorea.com/best" + list[i].getElementsByTagName("a").first.attributes["href"];
+            var url = "https://m.fmkorea.com/best" +
+                list[i].getElementsByTagName("a").first.attributes["href"];
             resultList.add(Post.fromString(post, reference, url));
           } catch (e) {
             print(e.toString());
@@ -282,13 +291,16 @@ Future<List<Post>> fetchPost(String site) async {
 
       //UTF 문제있음
       case 'UNIV':
-        var list = document.getElementById("list_body").getElementsByClassName("list_body_href");
+        var list = document
+            .getElementById("list_body")
+            .getElementsByClassName("list_body_href");
         var resultList = <Post>[];
-        for (var i = 0 ; i < list.length ; i++) {
+        for (var i = 0; i < list.length; i++) {
           try {
             var post = list[i].getElementsByClassName("li").first.text.trim();
             var reference = "웃긴대학";
-            var url = "http://m.humoruniv.com/board/list.html?table=pds" + list[i].attributes["href"];
+            var url = "http://m.humoruniv.com/board/list.html?table=pds" +
+                list[i].attributes["href"];
             resultList.add(Post.fromString(post, reference, url));
           } catch (e) {
             print(e.toString());
@@ -299,13 +311,23 @@ Future<List<Post>> fetchPost(String site) async {
 
       //비동기식으로 부르는것같음.
       case 'DOGDRIP':
-        var list = document.getElementsByClassName("board-list").first.getElementsByTagName("li");
+        var list = document
+            .getElementsByClassName("board-list")
+            .first
+            .getElementsByTagName("li");
         var resultList = <Post>[];
-        for (var i = 0 ; i < list.length ; i++) {
+        for (var i = 0; i < list.length; i++) {
           try {
-            var post = list[i].getElementsByClassName("title").first.text.trim();
+            var post =
+                list[i].getElementsByClassName("title").first.text.trim();
             var reference = "개드립";
-            var url = "https://www.dogdrip.net/dogdrip" + list[i].getElementsByClassName("title").first.getElementsByTagName("a").first.attributes["href"];
+            var url = "https://www.dogdrip.net/dogdrip" +
+                list[i]
+                    .getElementsByClassName("title")
+                    .first
+                    .getElementsByTagName("a")
+                    .first
+                    .attributes["href"];
             resultList.add(Post.fromString(post, reference, url));
           } catch (e) {
             print(e.toString());
@@ -316,13 +338,17 @@ Future<List<Post>> fetchPost(String site) async {
 
       //파싱확인 최종 몰라.
       case 'NATE':
-        var list = document.getElementsByClassName("list").first.getElementsByTagName("li");
+        var list = document
+            .getElementsByClassName("list")
+            .first
+            .getElementsByTagName("li");
         var resultList = <Post>[];
-        for (var i = 0 ; i < list.length ; i++) {
+        for (var i = 0; i < list.length; i++) {
           try {
             var post = list[i].getElementsByClassName("tit").first.text.trim();
             var reference = "네이트판";
-            var url = "https://m.pann.nate.com/talk/today/" + list[i].getElementsByTagName("a").first.attributes["href"];
+            var url = "https://m.pann.nate.com/talk/today/" +
+                list[i].getElementsByTagName("a").first.attributes["href"];
             resultList.add(Post.fromString(post, reference, url));
           } catch (e) {
             print(e.toString());
@@ -331,15 +357,22 @@ Future<List<Post>> fetchPost(String site) async {
         return resultList.toList();
         break;
 
-      //파싱후 공백 없애버려야함.
       case 'CLIEN':
-        var list = document.getElementsByClassName("content_list").first.getElementsByClassName("list_item");
+        var list = document
+            .getElementsByClassName("content_list")
+            .first
+            .getElementsByClassName("list_item");
         var resultList = <Post>[];
-        for (var i = 0 ; i < list.length ; i++) {
+        for (var i = 0; i < list.length; i++) {
           try {
-            var post = list[i].getElementsByClassName("list_subject").first.text.trim();
+            var post = list[i]
+                .getElementsByClassName("list_subject")
+                .first
+                .text
+                .trim();
             var reference = "클리앙";
-            var url = "https://m.clien.net/" + list[i].getElementsByTagName("a").first.attributes["href"];
+            var url = "https://m.clien.net/" +
+                list[i].getElementsByTagName("a").first.attributes["href"];
             resultList.add(Post.fromString(post, reference, url));
           } catch (e) {
             print(e.toString());
@@ -348,15 +381,22 @@ Future<List<Post>> fetchPost(String site) async {
         return resultList.toList();
         break;
 
-      
       case 'FOMOS':
-        var list = document.getElementById("contents").getElementsByClassName("ut_item");
+        var list = document
+            .getElementById("contents")
+            .getElementsByClassName("ut_item");
         var resultList = <Post>[];
-        for (var i = 0 ; i < list.length ; i++) {
+        for (var i = 0; i < list.length; i++) {
           try {
-            var post = list[i].getElementsByTagName("a").first.text.trim().substring(1);
+            var post = list[i]
+                .getElementsByTagName("a")
+                .first
+                .text
+                .trim()
+                .substring(1);
             var reference = "클리앙";
-            var url = "http://m.fomos.kr" + list[i].getElementsByTagName("a").first.attributes["href"];
+            var url = "http://m.fomos.kr" +
+                list[i].getElementsByTagName("a").first.attributes["href"];
             resultList.add(Post.fromString(post, reference, url));
           } catch (e) {
             print(e.toString());
@@ -367,13 +407,18 @@ Future<List<Post>> fetchPost(String site) async {
 
       //비동기
       case 'MLB':
-        var list = document.getElementsByClassName("contents").first.getElementsByClassName("items");
+        var list = document
+            .getElementsByClassName("contents")
+            .first
+            .getElementsByClassName("items");
         var resultList = <Post>[];
-        for (var i = 0 ; i < list.length ; i++) {
+        for (var i = 0; i < list.length; i++) {
           try {
-            var post = list[i].getElementsByClassName("title").first.text.trim();
+            var post =
+                list[i].getElementsByClassName("title").first.text.trim();
             var reference = "MLB파크";
-            var url = list[i].getElementsByTagName("a").first.attributes["href"];
+            var url =
+                list[i].getElementsByTagName("a").first.attributes["href"];
             resultList.add(Post.fromString(post, reference, url));
           } catch (e) {
             print(e.toString());
@@ -381,18 +426,13 @@ Future<List<Post>> fetchPost(String site) async {
         }
         return resultList.toList();
         break;
-
-      } //end switch
-
-
-
+    } //end switch
 
     return List();
   } else {
     return List();
   }
 }
-
 
 String log(Object object) {
   print(object.toString());
