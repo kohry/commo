@@ -8,7 +8,7 @@ import 'dart:convert' show Codec;
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart' as dom;
 
-import 'package:flutter_inappbrowser/flutter_inappbrowser.dart';
+import 'secondscreen.dart' show SecondScreen;
 
 void main() => runApp(new CoMMoApp());
 
@@ -83,24 +83,7 @@ class PostingBunch extends StatefulWidget {
   PostingBunchState createState() => new PostingBunchState();
 }
 
-class SecondScreen extends StatelessWidget {
 
-  final String title;
-
-  SecondScreen({Key key, @required this.title}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Second Screen"),
-      ),
-      body: Center(
-        child: Text("webview here")
-      ),
-    );
-  }
-}
 
 class Post {
   final String title;
