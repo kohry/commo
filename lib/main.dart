@@ -1,46 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:english_words/english_words.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:async';
-import 'dart:convert';
+import 'dart:convert' show utf8;
+import 'dart:convert' show Codec;
 
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart' as dom;
 
-void main() => runApp(new MyApp());
+void main() => runApp(new CoMMoApp());
 
-// class MyApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: '커뮤니티 모아보기',
-//       theme: new ThemeData(
-//         primaryColor: Colors.white,
-//       ),
-//       home: RandomWords(),
-//     );
-//   }
-// }
-
-class MyApp extends StatelessWidget {
+class CoMMoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Fetch Data Example',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+      title: '커뮤니티 모아보기',
+      theme: new ThemeData(
+        primaryColor: Colors.white,
       ),
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Fetch Data Example'),
+          title: Text('컴모 - 커뮤니티 모아보기'),
         ),
         body: Center(
-          child: FutureBuilder<String>(
-            future: fetchPost(),
+          child: FutureBuilder<List<Post>>(
+            future: fetchPost("BOBAE"),
+            // future: fetchPostTest(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return Text(snapshot.data);
+                // return Text(snapshot.data.toString());
+                return buildList(snapshot.data);
               } else if (snapshot.hasError) {
                 return Text("${snapshot.error}");
               }
@@ -55,146 +44,41 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  _MyHomePageState createState() => new _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return new Scaffold(
-      appBar: new AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: new Text(widget.title),
-      ),
-      body: new Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: new Column(
-          // Column is also layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug paint" (press "p" in the console where you ran
-          // "flutter run", or select "Toggle Debug Paint" from the Flutter tool
-          // window in IntelliJ) to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            new Text(
-              'You have pushed the button this many tim1es:',
-            ),
-            new Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: new FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: new Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
-  }
-}
-
-class RandomWordsState extends State<RandomWords> {
-  final List<WordPair> _suggestions = <WordPair>[];
-  final Set<WordPair> _saved = new Set<WordPair>(); // Add this line.
-  final TextStyle _biggerFont = const TextStyle(fontSize: 18.0);
-
-  Widget _buildSuggestions() {
+  Widget buildList(List<Post> posts) {
     return ListView.builder(
         padding: const EdgeInsets.all(16.0),
-        // The itemBuilder callback is called once per suggested word pairing,
-        // and places each suggestion into a ListTile row.
-        // For even rows, the function adds a ListTile row for the word pairing.
-        // For odd rows, the function adds a Divider widget to visually
-        // separate the entries. Note that the divider may be difficult
-        // to see on smaller devices.
         itemBuilder: (context, i) {
-          // Add a one-pixel-high divider widget before each row in theListView.
           if (i.isOdd) return Divider();
-
-          // The syntax "i ~/ 2" divides i by 2 and returns an integer result.
-          // For example: 1, 2, 3, 4, 5 becomes 0, 1, 1, 2, 2.
-          // This calculates the actual number of word pairings in the ListView,
-          // minus the divider widgets.
-          final index = i ~/ 2;
-          // If you've reached the end of the available word pairings...
-          if (index >= _suggestions.length) {
-            // ...then generate 10 more and add them to the suggestions list.
-            _suggestions.addAll(generateWordPairs().take(10));
-          }
-          return _buildRow(_suggestions[index]);
+          return buildRow(posts[i]);
         });
   }
 
-  Widget _buildRow(WordPair pair) {
-    final bool alreadySaved = _saved.contains(pair);
+  Widget buildRow(Post post) {
     return new ListTile(
       title: new Text(
-        pair.asPascalCase,
-        style: _biggerFont,
+        "[" + post.reference + "] " + post.title,
       ),
-      trailing: new Icon(
-        // Add the lines from here...
-        alreadySaved ? Icons.favorite : Icons.favorite_border,
-        color: alreadySaved ? Colors.red : null,
-      ), // ... to here.
-      onTap: () {
-        // Add 9 lines from here...
-        setState(() {
-          if (alreadySaved) {
-            _saved.remove(pair);
-          } else {
-            _saved.add(pair);
-          }
-        });
-      },
     );
   }
+
+class Post {
+  final String title;
+  final String reference;
+  final String url;
+
+  Post({this.title, this.reference, this.url});
+
+  factory Post.fromString(String title, String reference, String url) {
+    return Post(title: title, reference: reference, url: url);
+  }
+}
+
+
+class PostingBunchState extends State<PostingBunch> {
+
+  final TextStyle _biggerFont = const TextStyle(fontSize: 18.0);
+
+  final List<Post> _posts = <Post>[];
 
   @override
   Widget build(BuildContext context) {
@@ -203,87 +87,186 @@ class RandomWordsState extends State<RandomWords> {
         title: Text('커뮤니티 모아보기'),
         actions: <Widget>[
           // Add 3 lines from here...
-          new IconButton(icon: const Icon(Icons.list), onPressed: _pushSaved),
+          // new IconButton(icon: const Icon(Icons.list), onPressed: _pushSaved),
         ], // ... to here.
       ),
-      body: _buildSuggestions(),
+      body: _buildList(),
     );
   }
 
-  void _pushSaved() {
-    Navigator.of(context).push(
-      new MaterialPageRoute<void>(
-        builder: (BuildContext context) {
-          final Iterable<ListTile> tiles = _saved.map(
-            (WordPair pair) {
-              return new ListTile(
-                title: new Text(
-                  pair.asPascalCase,
-                  style: _biggerFont,
-                ),
-              );
-            },
-          );
-          final List<Widget> divided = ListTile.divideTiles(
-            context: context,
-            tiles: tiles,
-          ).toList();
+  Widget _buildList() {
+    return ListView.builder(
+        padding: const EdgeInsets.all(16.0),
+        itemBuilder: (context, i) {
+          if (i.isOdd) return Divider();
+          final index = i ~/ 2;
+          if (index >= _posts.length) {
+            // _posts.addAll(generate().take(10));
+          }
+        });
+  }
 
-          return new Scaffold(
-            // Add 6 lines from here...
-            appBar: new AppBar(
-              title: const Text('Saved Suggestions'),
-            ),
-            body: new ListView(children: divided),
-          ); // ... to here.
-        },
+  Widget _buildRow(Post post) {
+    return new ListTile(
+      title: new Text(
+        "[" + post.reference + "] " + post.title,
+        style: _biggerFont,
       ),
     );
   }
+
+
 }
 
-class RandomWords extends StatefulWidget {
+class PostingBunch extends StatefulWidget {
   @override
-  RandomWordsState createState() => new RandomWordsState();
+  PostingBunchState createState() => new PostingBunchState();
 }
 
-class Post {
-  final int userId;
-  final int id;
-  final String title;
-  final String body;
 
-  Post({this.userId, this.id, this.title, this.body});
+// 뽐뿌
+Future<List<Post>> fetchPostTest() async {
+  final response = await http.get('http://m.ppomppu.co.kr/new/');
 
-  factory Post.fromJson(Map<String, dynamic> json) {
-    return Post(
-      userId: json['userId'],
-      id: json['id'],
-      title: json['title'],
-      body: json['body'],
-    );
+  if (response.statusCode == 200) {
+    // If the call to the server was successful, parse the JSON
+    var document = parse( response.body );
+
+    var aa = response.bodyBytes;    
+
+    var list = document.getElementById("mainList").children.first.children;
+
+    var postList = list.map((element) => Post.fromString(element.text, "뽐뿌","a"));
+    return postList.toList();
+  } else {
+    // throw Exception('Failed to load post');
+    return List();
   }
 }
 
 // Future<Post> fetchPost() async {
-  Future<String> fetchPost() async {
-  final response =
-      // await http.get('https://jsonplaceholder.typicode.com/posts/1');
-      await http.get('http://m.ppomppu.co.kr/new/');
+Future<List<Post>> fetchPost(String site) async {
+
+  var url = "http://www.slrclub.com/bbs/zboard.php?id=hot_article";
+
+  switch(site) {
+    case 'SLR':
+      url = "http://www.slrclub.com/bbs/zboard.php?id=hot_article";
+      break;
+    case 'INVEN':
+      url = "http://m.inven.co.kr/board/powerbbs.php?come_idx=2097";
+      break;
+    case 'RULIWEB':
+      url = "https://m.ruliweb.com/best";
+      break;  
+    case 'BOBAE':
+      url = "http://m.bobaedream.co.kr/board/new_writing/best";
+      break;  
+  }
+  
+  final response = await http.get(url);
 
   if (response.statusCode == 200) {
-    // If the call to the server was successful, parse the JSON
-    var document = parse(response.body);
-    var mainList = document.getElementById("mainList").children.first.children.toString();
     
-    return mainList;
-    // return Post.fromJson(json.decode(response.body));
+    var document = parse( response.body );
+    
+    switch(site) {
+
+      case 'SLR':
+        var list = document.getElementById("bbs_list").getElementsByClassName("sbj");
+        var resultList = <Post>[];
+        for (var i = 0 ; i < list.length ; i++) {
+          try {
+            var post = list[i].getElementsByTagName("a").first.text;
+            var reference = "SLR클럽";
+            var url = "http://www.slrclub.com" + list[i].getElementsByTagName("a").first.attributes["href"];
+            resultList.add(Post.fromString(post, reference, url));
+          } catch (e) {
+            print(e.toString());
+          }
+        }
+        return resultList.toList();
+        break;        
+
+      //TODO: [공지]같은 앞의 태그 없애야함.
+      case 'INVEN':
+        var list = document.getElementById("boardList").getElementsByClassName("articleSubject");
+        var resultList = <Post>[];
+        for (var i = 0 ; i < list.length ; i++) {
+          try {
+            var post = list[i].getElementsByClassName("title").first.text;
+            var reference = "인벤";
+            var url = "http://m.inven.co.kr" + list[i].getElementsByTagName("a").first.attributes["href"];
+            resultList.add(Post.fromString(post, reference, url));
+          } catch (e) {
+            print(e.toString());
+          }
+        }
+        return resultList.toList();
+        break;
+
+      //
+      case 'RULIWEB':
+        var list = document.getElementById("board_list").getElementsByClassName("title");
+        var resultList = <Post>[];
+        for (var i = 0 ; i < list.length ; i++) {
+          try {
+            var post = list[i].getElementsByClassName("subject_link").first.text;
+            var reference = "루리웹";
+            var url = list[i].getElementsByTagName("a").first.attributes["href"];
+            resultList.add(Post.fromString(post, reference, url));
+          } catch (e) {
+            print(e.toString());
+          }
+        }
+        return resultList.toList();
+        break;
+
+      //
+      case 'RULIWEB':
+        var list = document.getElementById("board_list").getElementsByClassName("title");
+        var resultList = <Post>[];
+        for (var i = 0 ; i < list.length ; i++) {
+          try {
+            var post = list[i].getElementsByClassName("subject_link").first.text;
+            var reference = "루리웹";
+            var url = list[i].getElementsByTagName("a").first.attributes["href"];
+            resultList.add(Post.fromString(post, reference, url));
+          } catch (e) {
+            print(e.toString());
+          }
+        }
+        return resultList.toList();
+        break;
+
+      case 'BOBAE':
+        var list = document.getElementsByClassName("rank").first.getElementsByClassName("info");
+        var resultList = <Post>[];
+        for (var i = 0 ; i < list.length ; i++) {
+          try {
+            var post = list[i].getElementsByClassName("cont").first.text;
+            var reference = "보배드림";
+            var url = list[i].getElementsByTagName("a").first.attributes["href"];
+            resultList.add(Post.fromString(post, reference, url));
+          } catch (e) {
+            print(e.toString());
+          }
+        }
+        return resultList.toList();
+        break;
+
+      } //end switch
+
+
+
+
+    return List();
   } else {
-    // If that call was not successful, throw an error.
-    throw Exception('Failed to load post');
+    return List();
   }
 }
 
 
-
-
+String log(Object object) {
+  print(object.toString());
+}
