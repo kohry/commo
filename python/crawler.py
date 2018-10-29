@@ -2,6 +2,7 @@ from selenium import webdriver
 import os
 import traceback
 
+
 def fetch(site) :
 
 
