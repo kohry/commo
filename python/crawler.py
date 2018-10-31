@@ -1,21 +1,29 @@
 from selenium import webdriver
 import os
 import traceback
+import time
+import datetime
 
 
 def fetch(site) :
 
+    timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+    list=[]
+
     if site == "PPOMPPU":
 
         br.get('http://m.ppomppu.co.kr/new/#hot_bbs')
-        list = br.find_element_by_id("mainList").find_elements_by_tag_name("li")
+        try:
+            list = br.find_element_by_id("mainList").find_elements_by_tag_name("li")
+        except:
+            print("not parsed from the start")
         result = []
         for i in list:
             try :
                 title = str(i.find_element_by_class_name("main_text02").text).replace("/","_")
                 href = str(i.find_element_by_tag_name("a").get_attribute("href"))
                 comment_count = str(i.find_element_by_class_name("main_list_comment").text)
-                result.append({'title' : title, 'href' : href, 'comment_count' : comment_count, 'site':site })
+                result.append({'title' : title, 'href' : href, 'comment_count' : comment_count, 'site':site, 'timestamp': timestamp})
             except:
                 print("error:")
                 traceback.print_exc()
@@ -24,14 +32,17 @@ def fetch(site) :
     if site == "BOBAE":
 
         br.get('http://m.bobaedream.co.kr/board/new_writing/best')
-        list = br.find_element_by_class_name("rank").find_elements_by_class_name("info")
+        try:
+            list = br.find_element_by_class_name("rank").find_elements_by_class_name("info")
+        except:
+            print("not parsed from the start")
         result = []
         for i in list:
             try:
                 title = str(i.find_element_by_class_name("cont").text).strip().replace("/","_")
                 href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()
                 comment_count = str(i.find_element_by_class_name("num").text)
-                result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site })
+                result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site, 'timestamp': timestamp})
             except:
                 print("error:")
                 traceback.print_exc()
@@ -40,14 +51,17 @@ def fetch(site) :
     if site == "RULIWEB":
 
         br.get('https://m.ruliweb.com/best')
-        list = br.find_element_by_id("board_list").find_elements_by_class_name("title")
+        try:
+            list = br.find_element_by_id("board_list").find_elements_by_class_name("title")
+        except:
+            print("not parsed from the start")
         result = []
         for i in list:
             try:
                 title = str(i.find_element_by_class_name("subject_link").text).strip().replace("/","_")
                 href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()
                 comment_count = str(i.find_element_by_class_name("num").text)
-                result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site })
+                result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site, 'timestamp': timestamp})
             except:
                 print("error:")
                 traceback.print_exc()
@@ -56,14 +70,17 @@ def fetch(site) :
     if site == "INVEN":
 
         br.get('http://m.inven.co.kr/board/powerbbs.php?come_idx=2097')
-        list = br.find_element_by_id("boardList").find_elements_by_class_name("articleSubject")
+        try:
+            list = br.find_element_by_id("boardList").find_elements_by_class_name("articleSubject")
+        except:
+            print("not parsed from the start")
         result = []
         for i in list:
             try:
                 title = str(i.find_element_by_class_name("title").text).strip().replace("/","_")
                 href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()
                 comment_count = str("X")
-                result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site })
+                result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site, 'timestamp': timestamp})
             except:
                 print("error:")
                 traceback.print_exc()
@@ -72,14 +89,17 @@ def fetch(site) :
     if site == "SLR":
 
         br.get('http://m.slrclub.com/l/hot_article')
-        list = br.find_element_by_class_name("list").find_elements_by_class_name("article")
+        try:
+            list = br.find_element_by_class_name("list").find_elements_by_class_name("article")
+        except:
+            print("not parsed from the start")
         result = []
         for i in list:
             try:
                 title = str(i.find_element_by_tag_name("a").text).strip().replace("/","_")
                 href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()
                 comment_count = str(i.parent.find_element_by_class_name("cmt2").text)
-                result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site })
+                result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site, 'timestamp': timestamp})
             except:
                 print("error:")
                 traceback.print_exc()
@@ -88,14 +108,17 @@ def fetch(site) :
     if site == "FM":
 
         br.get('https://m.fmkorea.com/best')
-        list = br.find_element_by_class_name("fm_best_widget").find_elements_by_class_name("li")
+        try:
+            list = br.find_element_by_class_name("fm_best_widget").find_elements_by_class_name("li")
+        except:
+            print("not parsed from the start")
         result = []
         for i in list:
             try:
                 title = str(i.find_element_by_class_name("title").text).strip().replace("/","_")
                 href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()
                 comment_count = str("X")
-                result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site })
+                result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site, 'timestamp': timestamp})
             except:
                 print("error:")
                 traceback.print_exc()
@@ -105,14 +128,17 @@ def fetch(site) :
     if site == "UNIV":
 
         br.get('http://m.humoruniv.com/board/list.html?table=pds')
-        list = br.find_element_by_id("list_body").find_elements_by_class_name("list_body_href")
+        try:
+            list = br.find_element_by_id("list_body").find_elements_by_class_name("list_body_href")
+        except:
+            print("not parsed from the start")
         result = []
         for i in list:
             try:
                 title = str(i.find_element_by_class_name("li").text).strip().replace("/","_")
                 href = str(i.get_attribute("href")).strip()
                 comment_count = str(i.find_element_by_class_name("ok_num").text).strip()
-                result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site })
+                result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site, 'timestamp': timestamp})
             except:
                 print("error:")
                 traceback.print_exc()
@@ -120,16 +146,21 @@ def fetch(site) :
 
 
     if site == "DOGDRIP":
-        br.implicitly_wait(5)
+        br.implicitly_wait(10)
         br.get('https://www.dogdrip.net/dogdrip')
-        list = br.find_element_by_class_name("list").find_elements_by_tag_name("li")
+
+        try:
+            list = br.find_element_by_class_name("list").find_elements_by_tag_name("li")
+        except:
+            print("not parsed from the start")
+
         result = []
         for i in list:
             try:
                 title = str(i.find_element_by_tag_name("a").text).strip().replace("/","_")
                 href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()
                 comment_count = str("X").strip()
-                result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site })
+                result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site, 'timestamp': timestamp})
             except:
                 print("error:")
                 traceback.print_exc()
@@ -139,14 +170,17 @@ def fetch(site) :
     if site == "CLIEN":
 
         br.get('https://m.clien.net/service/group/clien_all?&od=T33')
-        list = br.find_element_by_class_name("content_list").find_elements_by_class_name("list_item")
+        try:
+            list = br.find_element_by_class_name("content_list").find_elements_by_class_name("list_item")
+        except:
+            print("not parsed from the start")
         result = []
         for i in list:
             try:
                 title = str(i.find_element_by_class_name("list_subject").text).strip().replace("/","_")
                 href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()
                 comment_count = str("X").strip()
-                result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site })
+                result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site, 'timestamp': timestamp})
             except:
                 print("error:")
                 traceback.print_exc()
@@ -156,14 +190,17 @@ def fetch(site) :
     if site == "FOMOS":
 
         br.get('http://m.fomos.kr/talk/article_list?bbs_id=1')
-        list = br.find_element_by_id("contents").find_elements_by_class_name("ut_item")
+        try:
+            list = br.find_element_by_id("contents").find_elements_by_class_name("ut_item")
+        except:
+            print("not parsed from the start")
         result = []
         for i in list:
             try:
                 title = str(i.find_element_by_tag_name("a").text).strip().replace("/","_")
                 href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()[1:]
                 comment_count = str("X").strip()
-                result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site })
+                result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site, 'timestamp': timestamp})
             except:
                 print("error:")
                 traceback.print_exc()
@@ -172,14 +209,17 @@ def fetch(site) :
     if site == "MLB":
         br.implicitly_wait(5)
         br.get('http://mlbpark.donga.com/mlbpark/b.php?b=bullpen')
-        list = br.find_element_by_class_name("tbl_type01").find_elements_by_tag_name("tr")
+        try:
+            list = br.find_element_by_class_name("tbl_type01").find_elements_by_tag_name("tr")
+        except:
+            print("not parsed from the start")
         result = []
         for i in list:
             try:
                 title = str(i.find_element_by_class_name("t_left").text).strip().replace("/","_")
                 href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()
                 comment_count = str("X").strip()
-                result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site })
+                result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site, 'timestamp': timestamp})
             except:
                 print("error:")
                 traceback.print_exc()
@@ -188,14 +228,17 @@ def fetch(site) :
     if site == "DDANZI":
         br.implicitly_wait(3)
         br.get('http://www.ddanzi.com/index.php?mid=free&statusList=HOT%2CHOTBEST')
-        list = br.find_element_by_id("list_style").find_elements_by_class_name("title")
+        try:
+            list = br.find_element_by_id("list_style").find_elements_by_class_name("title")
+        except:
+            print("not parsed from the start")
         result = []
         for i in list:
             try:
                 title = str(i.find_element_by_tag_name("a").text).strip().replace("/","_")
                 href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()
                 comment_count = str("X").strip()
-                result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site })
+                result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site, 'timestamp': timestamp})
             except:
                 print("error:")
                 traceback.print_exc()
@@ -205,14 +248,17 @@ def fetch(site) :
     if site == "INSTIZ":
         br.implicitly_wait(3)
         br.get('https://www.instiz.net/bbs/list.php?id=pt&srt=3')
-        list = br.find_element_by_id("mainboard").find_elements_by_id("subject")
+        try:
+            list = br.find_element_by_id("mainboard").find_elements_by_id("subject")
+        except:
+            print("not parsed from the start")
         result = []
         for i in list:
             try:
                 title = str(i.find_element_by_tag_name("a").text).strip().replace("/","_")
                 href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()
                 comment_count = str("X").strip()
-                result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site })
+                result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site, 'timestamp': timestamp})
             except:
                 print("error:")
                 traceback.print_exc()
@@ -223,14 +269,17 @@ def fetch(site) :
     if site == "YGOSU":
         br.implicitly_wait(3)
         br.get('https://www.ygosu.com/community/real_article')
-        list = br.find_element_by_class_name("bd_list").find_elements_by_class_name("tit")
+        try:
+            list = br.find_element_by_class_name("bd_list").find_elements_by_class_name("tit")
+        except:
+            print("not parsed from the start")
         result = []
         for i in list:
             try:
                 title = str(i.find_element_by_tag_name("a").text).strip().replace("/","_")
                 href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()
                 comment_count = str("X").strip()
-                result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site })
+                result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site, 'timestamp': timestamp})
             except:
                 print("error:")
                 traceback.print_exc()
@@ -239,14 +288,17 @@ def fetch(site) :
     if site == "NATE":
         br.implicitly_wait(3)
         br.get('https://m.pann.nate.com/talk/today')
-        list = br.find_element_by_class_name("list").find_elements_by_tag_name("li")
+        try:
+            list = br.find_element_by_class_name("list").find_elements_by_tag_name("li")
+        except:
+            print("not parsed from the start")
         result = []
         for i in list:
             try:
                 title = str(i.find_element_by_tag_name("a").text).strip().replace("/","_")
                 href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()
                 comment_count = str("X").strip()
-                result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site })
+                result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site, 'timestamp': timestamp})
             except:
                 print("error:")
                 traceback.print_exc()
@@ -256,14 +308,17 @@ def fetch(site) :
     if site == "DC":
         br.implicitly_wait(3)
         br.get('http://gall.dcinside.com/board/lists/?id=hit')
-        list = br.find_element_by_class_name("gall_list").find_elements_by_class_name("gall_tit")
+        try:
+            list = br.find_element_by_class_name("gall_list").find_elements_by_class_name("gall_tit")
+        except:
+            print("not parsed from the start")
         result = []
         for i in list:
             try:
                 title = str(i.find_element_by_tag_name("a").text).strip().replace("/","_")
                 href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()
                 comment_count = str("X").strip()
-                result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site })
+                result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site, 'timestamp': timestamp})
             except:
                 print("error:")
                 traceback.print_exc()
@@ -273,14 +328,17 @@ def fetch(site) :
     if site == "TODAY":
         br.implicitly_wait(3)
         br.get('http://www.todayhumor.co.kr/board/list.php?table=bestofbest')
-        list = br.find_elements_by_class_name("subject")
+        try:
+            list = br.find_elements_by_class_name("subject")
+        except:
+            print("not parsed from the start")
         result = []
         for i in list:
             try:
                 title = str(i.find_element_by_tag_name("a").text).strip().replace("/","_")
                 href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()
                 comment_count = str("X").strip()
-                result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site })
+                result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site, 'timestamp': timestamp})
             except:
                 print("error:")
                 traceback.print_exc()
