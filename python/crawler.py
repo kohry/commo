@@ -61,7 +61,7 @@ def fetch(site) :
         for i in list:
             try:
                 title = str(i.find_element_by_class_name("title").text).strip().replace("/","_")
-                href = str("http://m.inven.co.kr" + i.find_element_by_tag_name("a").get_attribute("href")).strip()
+                href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()
                 comment_count = str("X")
                 result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site })
             except:
@@ -77,7 +77,7 @@ def fetch(site) :
         for i in list:
             try:
                 title = str(i.find_element_by_tag_name("a").text).strip().replace("/","_")
-                href = str("http://m.slrclub.com/l/hot_article" + i.find_element_by_tag_name("a").get_attribute("href")).strip()
+                href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()
                 comment_count = str(i.parent.find_element_by_class_name("cmt2").text)
                 result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site })
             except:
@@ -93,7 +93,7 @@ def fetch(site) :
         for i in list:
             try:
                 title = str(i.find_element_by_class_name("title").text).strip().replace("/","_")
-                href = str("https://m.fmkorea.com/best" + i.find_element_by_tag_name("a").get_attribute("href")).strip()
+                href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()
                 comment_count = str("X")
                 result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site })
             except:
@@ -110,7 +110,7 @@ def fetch(site) :
         for i in list:
             try:
                 title = str(i.find_element_by_class_name("li").text).strip().replace("/","_")
-                href = str("http://m.humoruniv.com/board/list.html?table=pds" + i.get_attribute("href")).strip()
+                href = str(i.get_attribute("href")).strip()
                 comment_count = str(i.find_element_by_class_name("ok_num").text).strip()
                 result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site })
             except:
@@ -144,7 +144,7 @@ def fetch(site) :
         for i in list:
             try:
                 title = str(i.find_element_by_class_name("list_subject").text).strip().replace("/","_")
-                href = str("https://m.clien.net/" + i.find_element_by_tag_name("a").get_attribute("href")).strip()
+                href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()
                 comment_count = str("X").strip()
                 result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site })
             except:
@@ -161,7 +161,7 @@ def fetch(site) :
         for i in list:
             try:
                 title = str(i.find_element_by_tag_name("a").text).strip().replace("/","_")
-                href = str("http://m.fomos.kr" + i.find_element_by_tag_name("a").get_attribute("href")).strip()[1:]
+                href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()[1:]
                 comment_count = str("X").strip()
                 result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site })
             except:

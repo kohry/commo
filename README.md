@@ -1,6 +1,6 @@
-# commo
+# communitymoa
 
-A new Flutter project.
+Community Moa Bogi
 
 ## Getting Started
 

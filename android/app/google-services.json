@@ -1,27 +1,27 @@
 {
   "project_info": {
-    "project_number": "1004463328389",
-    "firebase_url": "https://commo-932e2.firebaseio.com",
-    "project_id": "commo-932e2",
-    "storage_bucket": "commo-932e2.appspot.com"
+    "project_number": "69086462362",
+    "firebase_url": "https://commo-d07de.firebaseio.com",
+    "project_id": "commo-d07de",
+    "storage_bucket": "commo-d07de.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1004463328389:android:b73d7359acec2254",
+        "mobilesdk_app_id": "1:69086462362:android:4c1f72ce2e1c49a4",
         "android_client_info": {
-          "package_name": "com.bgcompany.commo"
+          "package_name": "com.machinelearningkorea.communitymoa"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1004463328389-jlkilu4f1gjoojc7oh59f3i1bhn2spl2.apps.googleusercontent.com",
+          "client_id": "69086462362-pr2qc4m52omdce6jdmnmr7h87ffdta1u.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDgr90nq0DxCcMm6B6ZsFjx7IqzLFV90m4"
+          "current_key": "AIzaSyB0u7JjQUZmJpj7kuwzREQsjBolBWkzRLo"
         }
       ],
       "services": {
