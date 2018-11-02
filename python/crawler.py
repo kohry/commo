@@ -359,9 +359,9 @@ phantomjs_path = "./geckodriver"
 # options.add_argument('headless')
 # br = webdriver.Chrome(executable_path=phantomjs_path, service_log_path=os.path.devnull, chrome_options=options)
 
-# br = webdriver.Firefox()
+br = webdriver.Firefox()
 
-br = webdriver.Chrome()
+# br = webdriver.Chrome()
 
 # fetch("PPOMPPU")
 # fetch("BOBAE")
