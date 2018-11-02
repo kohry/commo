@@ -349,34 +349,10 @@ def fetch(site) :
 ########################################
 # ######################################################
 
-# phantomjs_path = "C://phantomjs//bin//phantomjs.exe"
 #phantomjs_path = "C://webdriver//chromedriver.exe"
 phantomjs_path = "/usr/lib/chromium-browser/chromedriver"
-# phantomjs_path = "./geckodriver"
 
 # br = webdriver.PhantomJS(executable_path=phantomjs_path, service_log_path=os.path.devnull)
 options = webdriver.ChromeOptions()
 options.add_argument('headless')
 br = webdriver.Chrome(executable_path=phantomjs_path, service_log_path=os.path.devnull, chrome_options=options)
-
-# br = webdriver.Firefox(executable_path="/urs/local/bin/geckodriver")
-
-# br = webdriver.Chrome()
-
-# fetch("PPOMPPU")
-# fetch("BOBAE")
-# fetch("RULIWEB")
-# fetch("INVEN")
-# fetch("SLR")
-# fetch("FM")
-# fetch("UNIV")
-# fetch("DOGDRIP")
-# fetch("CLIEN")
-# fetch("FOMOS")
-# fetch("MLB")
-# fetch("DDANZI")
-# fetch("INSTIZ")
-# fetch("YGOSU")
-# fetch("NATE")
-# fetch("DC")
-# fetch("TODAY")

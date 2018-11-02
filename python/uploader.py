@@ -4,23 +4,23 @@ from firebase_admin import firestore
 import crawler
 
 list = [
-# "PPOMPPU",
-# "BOBAE",
-# "RULIWEB",
-# "INVEN",
-# "SLR",
-# "FM",
-# "UNIV",
+"PPOMPPU",
+"BOBAE",
+"RULIWEB",
+"INVEN",
+"SLR",
+"FM",
+"UNIV",
 "DOGDRIP",
-# "CLIEN",
-# "FOMOS",
-# "MLB",
-# "DDANZI",
-# "INSTIZ",
-# "YGOSU",
-# "NATE",
-# "DC",
-# "TODAY"
+"CLIEN",
+"FOMOS",
+"MLB",
+"DDANZI",
+"INSTIZ",
+"YGOSU",
+"NATE",
+"DC",
+"TODAY"
 ]
 
 cred = credentials.Certificate("commo-d07de-firebase-adminsdk-1vlkw-8ba45418c0.json")
