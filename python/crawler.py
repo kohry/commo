@@ -359,7 +359,7 @@ phantomjs_path = "./geckodriver"
 # options.add_argument('headless')
 # br = webdriver.Chrome(executable_path=phantomjs_path, service_log_path=os.path.devnull, chrome_options=options)
 
-br = webdriver.Firefox(executable_path="./geckodriver")
+br = webdriver.Firefox(executable_path="/urs/local/bin/geckodriver")
 
 # br = webdriver.Chrome()
 
