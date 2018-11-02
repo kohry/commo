@@ -3,6 +3,8 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 import crawler
 
+print('start')
+
 list = [
 "PPOMPPU",
 "BOBAE",
@@ -23,7 +25,7 @@ list = [
 "TODAY"
 ]
 
-cred = credentials.Certificate("commo-d07de-firebase-adminsdk-1vlkw-8ba45418c0.json")
+cred = credentials.Certificate("./commo-d07de-firebase-adminsdk-1vlkw-8ba45418c0.json")
 
 firebase_admin.initialize_app(cred, {
   'projectId': 'commo-d07de',
