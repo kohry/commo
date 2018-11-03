@@ -33,42 +33,44 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('컴모 - 커뮤니티 모아보기')),
-      body: _buildBody(context),
+//      body: _buildBody(context),
+      body: _buildList(context),
     );
   }
 
-  Widget _buildBody(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance.collection('posts').orderBy("timestamp",descending: true).limit(50).snapshots(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) return LinearProgressIndicator();
-        lastVisible = snapshot.data.documents.last;
-        return _buildList(context, snapshot.data.documents);
-      },
-    );
-  }
+//  Widget _buildBody(BuildContext context) {
+//
+//
+//    return StreamBuilder<QuerySnapshot>(
+//      stream: Firestore.instance.collection('posts').orderBy("timestamp",descending: true).limit(50).snapshots(),
+//      builder: (context, snapshot) {
+//        if (!snapshot.hasData) return LinearProgressIndicator();
+//        lastVisible = snapshot.data.documents.last;
+//        return _buildList(context, snapshot.data.documents);
+//      },
+//    );
+//  }
 
-  Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
+  Widget _buildList(BuildContext context) {
+    final _dataList = [];
 
-    final loadingLength = 0;
     return ListView.builder(itemBuilder: (context, i) {
-         final index = i ~/ 50; //40개가 넘어가면 +1, +2 이렇게 넘어감
-         if (index > loadingLength) {
-           final snapshot = Firestore.instance.collection('posts').orderBy("timestamp",descending: true).startAfter(lastVisible).limit(50).getDocuments();
-           snapshot.then((s) => {
-                _dataList.addAll(s.documents);
-                lastVisible = s.documents.last;
-           });
-         } else { //맨처음
-           return _buildListItem(context,snapshot[i]);
-         }
+      final index = i ~/ 50; //40개가 넘어가면 +1, +2 이렇게 넘어감
+      print("iiiiiiiiiiiiii:" + i.toString());
+      print("sss" + _dataList.length.toString());
+      if (index >= _dataList.length) {
+        final query = Firestore.instance.collection('posts').orderBy('timestamp', descending: true);
+        final snapshot = _dataList.length == 0 ? query : query.startAfter(lastVisible);
 
+        final docs = snapshot.limit(50).getDocuments();
+
+        docs.then((s) {
+          _dataList.addAll(s.documents);
+        });
+
+        return _buildListItem(context, _dataList.elementAt(i));
+      }
     });
-
-    return ListView(
-      padding: const EdgeInsets.only(top: 20.0),
-      children: snapshot.map((data) => _buildListItem(context, data)).toList(),
-    );
   }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
@@ -90,6 +92,53 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+
+
+
+//    return ListView.builder(itemBuilder: (context, i) {
+//         final index = i ~/ 50; //40개가 넘어가면 +1, +2 이렇게 넘어감
+//         if (index > loadingLength) {
+//           final snapshot = Firestore.instance.collection('posts').orderBy("timestamp",descending: true).startAfter(lastVisible).limit(50).getDocuments();
+//           snapshot.then((s) => {
+//                _dataList.addAll(s.documents);
+//                lastVisible = s.documents.last;
+//           });
+//         } else { //맨처음
+//           return _buildListItem(context,snapshot[i]);
+//         }
+//
+//    });
+//
+//    return ListView(
+//      padding: const EdgeInsets.only(top: 20.0),
+//      children: snapshot.map((data) => _buildListItem(context, data)).toList(),
+//    );
+//  }
+
+//  Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
+//
+//    final loadingLength = 0;
+//    return ListView.builder(itemBuilder: (context, i) {
+//         final index = i ~/ 50; //40개가 넘어가면 +1, +2 이렇게 넘어감
+//         if (index > loadingLength) {
+//           final snapshot = Firestore.instance.collection('posts').orderBy("timestamp",descending: true).startAfter(lastVisible).limit(50).getDocuments();
+//           snapshot.then((s) => {
+//                _dataList.addAll(s.documents);
+//                lastVisible = s.documents.last;
+//           });
+//         } else { //맨처음
+//           return _buildListItem(context,snapshot[i]);
+//         }
+//
+//    });
+//
+//    return ListView(
+//      padding: const EdgeInsets.only(top: 20.0),
+//      children: snapshot.map((data) => _buildListItem(context, data)).toList(),
+//    );
+//  }
+
+
 
   _launchURL(String url) async {
     print(url);
