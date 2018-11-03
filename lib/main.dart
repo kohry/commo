@@ -25,6 +25,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
+  var lastVisible;
+  final _dataList = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,16 +39,32 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _buildBody(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance.collection('posts').orderBy("timestamp").snapshots(),
+      stream: Firestore.instance.collection('posts').orderBy("timestamp",descending: true).limit(50).snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return LinearProgressIndicator();
-
+        lastVisible = snapshot.data.documents.last;
         return _buildList(context, snapshot.data.documents);
       },
     );
   }
 
   Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
+
+    final loadingLength = 0;
+    return ListView.builder(itemBuilder: (context, i) {
+         final index = i ~/ 50; //40개가 넘어가면 +1, +2 이렇게 넘어감
+         if (index > loadingLength) {
+           final snapshot = Firestore.instance.collection('posts').orderBy("timestamp",descending: true).startAfter(lastVisible).limit(50).getDocuments();
+           snapshot.then((s) => {
+                _dataList.addAll(s.documents);
+                lastVisible = s.documents.last;
+           });
+         } else { //맨처음
+           return _buildListItem(context,snapshot[i]);
+         }
+
+    });
+
     return ListView(
       padding: const EdgeInsets.only(top: 20.0),
       children: snapshot.map((data) => _buildListItem(context, data)).toList(),
