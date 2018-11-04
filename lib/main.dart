@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
 import 'second_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:share/share.dart';
+import 'package:firebase_admob/firebase_admob.dart';
 
 void main() => runApp(MyApp());
 
@@ -12,6 +14,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Commo',
       home: MyHomePage(),
+      theme: ThemeData(
+        brightness: Brightness.light,
+        primaryColor: Colors.white,
+
+      ),
     );
   }
 }
@@ -49,7 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('컴모 - 커뮤니티 모아보기')),
+      appBar: AppBar(title: Text('컴모 - 커뮤니티 모아보기', style: TextStyle(fontFamily: 'NotoSansKR', fontWeight: FontWeight.w700),)),
       body: _buildBody(context),
     );
   }
@@ -85,21 +92,43 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
     final record = Record.fromSnapshot(data);
 
-    return Padding(
-      key: ValueKey(record.title),
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey),
-          borderRadius: BorderRadius.circular(5.0),
-        ),
-        child: ListTile(
-          title: Text(record.title),
-          trailing: Text(record.site.toString()),
-          onTap: () => _launchURL(record.href),
-        ),
+    return Card(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          ListTile(
+//            leading: Icon(Icons.album),
+            leading: Image.asset("asset/" + record.site + ".jpg", fit: BoxFit.fitHeight, width: 50.toDouble(),),
+            title: Text(record.title, style: TextStyle(fontFamily: 'NotoSansKR', fontWeight: FontWeight.w500),),
+            subtitle: Text(record.site + " : " + record.timestamp, style: TextStyle(fontFamily: 'NotoSansKR')),
+            onTap: () => _launchURL(record.href),
+            trailing: FlatButton(
+                child: Text('공유'),
+                padding: EdgeInsets.only(bottom: 0.0, top: 0.0, left: 0.0, right: 0.0),
+                textTheme: ButtonTextTheme.accent,
+                onPressed: () {
+                  Share.share('컴모 - 커뮤니티 모아보기 앱으로 편하게 보세요! \n\n' + record.title + '\n' + record.href);
+                },
+            ),
+            contentPadding: EdgeInsets.only(bottom: 5.0, top: 5.0, left: 10.0, right: 0.0)
+          ),
+//          ButtonTheme.bar(
+////
+//            child: ButtonBar(
+//              children: <Widget>[
+//                FlatButton(
+//                  child: const Text('공유하기'),
+//                  onPressed: () {
+//                    Share.share('컴모 - 커뮤니티 모아보기 앱으로 편하게 보세요! \n\n' + record.title + '\n' + record.href);
+//                  },
+//                ),
+//              ],
+//            ),
+//          ),
+        ],
       ),
     );
+
   }
 
   _launchURL(String url) async {
@@ -117,13 +146,15 @@ class Record {
   final String href;
   final String site;
   final String comment_count;
+  final String timestamp;
   final DocumentReference reference;
 
   Record.fromMap(Map<String, dynamic> map, {this.reference})
       : title = map['title'],
         href = map['href'],
         site = map['site'],
-        comment_count = map['comment_count'];
+        comment_count = map['comment_count'],
+        timestamp = map['timestamp'];
 
   Record.fromSnapshot(DocumentSnapshot snapshot)
       : this.fromMap(snapshot.data, reference: snapshot.reference);
