@@ -6,7 +6,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 void main() => runApp(MyApp());
 
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -26,51 +25,61 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  var lastVisible;
-  final _dataList = [];
+  var _lastRow = 0;
+  final FETCH_ROW = 50;
+
+  var stream;
+  ScrollController _scrollController = new ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    stream = newStream();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+        setState( () => stream = newStream() );
+      }
+    });
+  }
+
+  Stream<QuerySnapshot> newStream() {
+    return Firestore.instance.collection('posts').orderBy("timestamp", descending: true).limit(FETCH_ROW * (_lastRow + 1)).snapshots();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('컴모 - 커뮤니티 모아보기')),
-//      body: _buildBody(context),
-      body: _buildList(context),
+      body: _buildBody(context),
     );
   }
 
-//  Widget _buildBody(BuildContext context) {
-//
-//
-//    return StreamBuilder<QuerySnapshot>(
-//      stream: Firestore.instance.collection('posts').orderBy("timestamp",descending: true).limit(50).snapshots(),
-//      builder: (context, snapshot) {
-//        if (!snapshot.hasData) return LinearProgressIndicator();
-//        lastVisible = snapshot.data.documents.last;
-//        return _buildList(context, snapshot.data.documents);
-//      },
-//    );
-//  }
+  Widget _buildBody(BuildContext context) {
+    print("warning");
+    return StreamBuilder<QuerySnapshot>(
+      stream: stream,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) return LinearProgressIndicator();
+        return _buildList(context, snapshot.data.documents);
+      },
+    );
+  }
 
-  Widget _buildList(BuildContext context) {
-    final _dataList = [];
 
-    return ListView.builder(itemBuilder: (context, i) {
-      final index = i ~/ 50; //40개가 넘어가면 +1, +2 이렇게 넘어감
-      print("iiiiiiiiiiiiii:" + i.toString());
-      print("sss" + _dataList.length.toString());
-      if (index >= _dataList.length) {
-        final query = Firestore.instance.collection('posts').orderBy('timestamp', descending: true);
-        final snapshot = _dataList.length == 0 ? query : query.startAfter(lastVisible);
 
-        final docs = snapshot.limit(50).getDocuments();
-
-        docs.then((s) {
-          _dataList.addAll(s.documents);
+  Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
+    return ListView.builder(
+        controller: _scrollController,
+        itemCount: snapshot.length,
+        itemBuilder: (context, i) {
+          print("i : " + i.toString());
+          final currentRow = (i + 1) ~/ FETCH_ROW;
+          if (_lastRow != currentRow)  {
+            _lastRow = currentRow;
+          }
+            print("lastrow : " + _lastRow.toString());
+          return _buildListItem(context, snapshot[i]);
         });
-
-        return _buildListItem(context, _dataList.elementAt(i));
-      }
-    });
   }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
@@ -93,53 +102,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-
-
-//    return ListView.builder(itemBuilder: (context, i) {
-//         final index = i ~/ 50; //40개가 넘어가면 +1, +2 이렇게 넘어감
-//         if (index > loadingLength) {
-//           final snapshot = Firestore.instance.collection('posts').orderBy("timestamp",descending: true).startAfter(lastVisible).limit(50).getDocuments();
-//           snapshot.then((s) => {
-//                _dataList.addAll(s.documents);
-//                lastVisible = s.documents.last;
-//           });
-//         } else { //맨처음
-//           return _buildListItem(context,snapshot[i]);
-//         }
-//
-//    });
-//
-//    return ListView(
-//      padding: const EdgeInsets.only(top: 20.0),
-//      children: snapshot.map((data) => _buildListItem(context, data)).toList(),
-//    );
-//  }
-
-//  Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
-//
-//    final loadingLength = 0;
-//    return ListView.builder(itemBuilder: (context, i) {
-//         final index = i ~/ 50; //40개가 넘어가면 +1, +2 이렇게 넘어감
-//         if (index > loadingLength) {
-//           final snapshot = Firestore.instance.collection('posts').orderBy("timestamp",descending: true).startAfter(lastVisible).limit(50).getDocuments();
-//           snapshot.then((s) => {
-//                _dataList.addAll(s.documents);
-//                lastVisible = s.documents.last;
-//           });
-//         } else { //맨처음
-//           return _buildListItem(context,snapshot[i]);
-//         }
-//
-//    });
-//
-//    return ListView(
-//      padding: const EdgeInsets.only(top: 20.0),
-//      children: snapshot.map((data) => _buildListItem(context, data)).toList(),
-//    );
-//  }
-
-
-
   _launchURL(String url) async {
     print(url);
     if (await canLaunch(url)) {
@@ -148,11 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
       throw 'Could not launch $url';
     }
   }
-
 }
-
-
-
 
 class Record {
   final String title;
