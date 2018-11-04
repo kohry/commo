@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'second_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share/share.dart';
-import 'package:firebase_admob/firebase_admob.dart';
 
 void main() => runApp(MyApp());
 
@@ -12,7 +11,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Commo',
+      title: '컴모 - 커뮤니티 모아보기',
       home: MyHomePage(),
       theme: ThemeData(
         brightness: Brightness.light,

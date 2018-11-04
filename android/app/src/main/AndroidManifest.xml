@@ -14,7 +14,7 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="communitymoa"
+        android:label="커뮤니티 모아보기"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
