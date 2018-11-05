@@ -26,6 +26,7 @@ list = [
 ]
 
 cred = credentials.Certificate("/home/pi/commo/commo/python/commo-d07de-firebase-adminsdk-1vlkw-8ba45418c0.json")
+# cred = credentials.Certificate("commo-d07de-firebase-adminsdk-1vlkw-8ba45418c0.json")
 
 firebase_admin.initialize_app(cred, {
   'projectId': 'commo-d07de',
@@ -33,9 +34,13 @@ firebase_admin.initialize_app(cred, {
 
 db = firestore.client()
 
+br = crawler.prepareWebDriver()
 
 for site in list :
-    for post in crawler.fetch(site) :
+    for post in crawler.fetch(site,br) :
         doc_ref = db.collection(u'posts').document(post['title'])
         doc_ref.set(post)
+
+br.quit()
+
 

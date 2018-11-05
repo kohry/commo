@@ -3,9 +3,14 @@ import os
 import traceback
 import time
 import datetime
+import re
 
+def convert(str) :
+    a = re.sub("[\(\[\<].*?[\>\)\]]", "", str)
+    b = a.split("\n")[0].strip()
+    return b
 
-def fetch(site) :
+def fetch(site, br) :
 
     timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
     list=[]
@@ -21,6 +26,9 @@ def fetch(site) :
         for i in list:
             try :
                 title = str(i.find_element_by_class_name("main_text02").text).replace("/","_")
+                if "공지" in title :
+                    continue
+                title = convert(title)
                 href = str(i.find_element_by_tag_name("a").get_attribute("href"))
                 comment_count = str(i.find_element_by_class_name("main_list_comment").text)
                 result.append({'title' : title, 'href' : href, 'comment_count' : comment_count, 'site':site, 'timestamp': timestamp})
@@ -40,6 +48,9 @@ def fetch(site) :
         for i in list:
             try:
                 title = str(i.find_element_by_class_name("cont").text).strip().replace("/","_")
+                if "공지" in title :
+                    continue
+                title = convert(title)
                 href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()
                 comment_count = str(i.find_element_by_class_name("num").text)
                 result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site, 'timestamp': timestamp})
@@ -59,6 +70,9 @@ def fetch(site) :
         for i in list:
             try:
                 title = str(i.find_element_by_class_name("subject_link").text).strip().replace("/","_")
+                if "공지" in title :
+                    continue
+                title = convert(title)
                 href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()
                 comment_count = str(i.find_element_by_class_name("num").text)
                 result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site, 'timestamp': timestamp})
@@ -78,6 +92,9 @@ def fetch(site) :
         for i in list:
             try:
                 title = str(i.find_element_by_class_name("title").text).strip().replace("/","_")
+                if "공지" in title :
+                    continue
+                title = convert(title)
                 href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()
                 comment_count = str("X")
                 result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site, 'timestamp': timestamp})
@@ -97,6 +114,9 @@ def fetch(site) :
         for i in list:
             try:
                 title = str(i.find_element_by_tag_name("a").text).strip().replace("/","_")
+                if "공지" in title :
+                    continue
+                title = convert(title)
                 href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()
                 comment_count = str(i.parent.find_element_by_class_name("cmt2").text)
                 result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site, 'timestamp': timestamp})
@@ -116,6 +136,9 @@ def fetch(site) :
         for i in list:
             try:
                 title = str(i.find_element_by_class_name("title").text).strip().replace("/","_")
+                if "공지" in title :
+                    continue
+                title = convert(title)
                 href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()
                 comment_count = str("X")
                 result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site, 'timestamp': timestamp})
@@ -136,6 +159,9 @@ def fetch(site) :
         for i in list:
             try:
                 title = str(i.find_element_by_class_name("li").text).strip().replace("/","_")
+                if "공지" in title :
+                    continue
+                title = convert(title)
                 href = str(i.get_attribute("href")).strip()
                 comment_count = str(i.find_element_by_class_name("ok_num").text).strip()
                 result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site, 'timestamp': timestamp})
@@ -158,6 +184,9 @@ def fetch(site) :
         for i in list:
             try:
                 title = str(i.find_element_by_tag_name("a").text).strip().replace("/","_")
+                if "공지" in title :
+                    continue
+                title = convert(title)
                 href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()
                 comment_count = str("X").strip()
                 result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site, 'timestamp': timestamp})
@@ -178,6 +207,9 @@ def fetch(site) :
         for i in list:
             try:
                 title = str(i.find_element_by_class_name("list_subject").text).strip().replace("/","_")
+                if "공지" in title :
+                    continue
+                title = convert(title)
                 href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()
                 comment_count = str("X").strip()
                 result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site, 'timestamp': timestamp})
@@ -198,6 +230,9 @@ def fetch(site) :
         for i in list:
             try:
                 title = str(i.find_element_by_tag_name("a").text).strip().replace("/","_")
+                if "공지" in title :
+                    continue
+                title = convert(title)
                 href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()[1:]
                 comment_count = str("X").strip()
                 result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site, 'timestamp': timestamp})
@@ -217,6 +252,9 @@ def fetch(site) :
         for i in list:
             try:
                 title = str(i.find_element_by_class_name("t_left").text).strip().replace("/","_")
+                if "공지" in title :
+                    continue
+                title = convert(title)
                 href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()
                 comment_count = str("X").strip()
                 result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site, 'timestamp': timestamp})
@@ -236,6 +274,9 @@ def fetch(site) :
         for i in list:
             try:
                 title = str(i.find_element_by_tag_name("a").text).strip().replace("/","_")
+                if "공지" in title :
+                    continue
+                title = convert(title)
                 href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()
                 comment_count = str("X").strip()
                 result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site, 'timestamp': timestamp})
@@ -256,6 +297,9 @@ def fetch(site) :
         for i in list:
             try:
                 title = str(i.find_element_by_tag_name("a").text).strip().replace("/","_")
+                if "공지" in title :
+                    continue
+                title = convert(title)
                 href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()
                 comment_count = str("X").strip()
                 result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site, 'timestamp': timestamp})
@@ -277,6 +321,9 @@ def fetch(site) :
         for i in list:
             try:
                 title = str(i.find_element_by_tag_name("a").text).strip().replace("/","_")
+                if "공지" in title :
+                    continue
+                title = convert(title)
                 href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()
                 comment_count = str("X").strip()
                 result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site, 'timestamp': timestamp})
@@ -296,6 +343,9 @@ def fetch(site) :
         for i in list:
             try:
                 title = str(i.find_element_by_tag_name("a").text).strip().replace("/","_")
+                if "공지" in title :
+                    continue
+                title = convert(title)
                 href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()
                 comment_count = str("X").strip()
                 result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site, 'timestamp': timestamp})
@@ -316,6 +366,9 @@ def fetch(site) :
         for i in list:
             try:
                 title = str(i.find_element_by_tag_name("a").text).strip().replace("/","_")
+                if "공지" in title :
+                    continue
+                title = convert(title)
                 href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()
                 comment_count = str("X").strip()
                 result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site, 'timestamp': timestamp})
@@ -336,6 +389,9 @@ def fetch(site) :
         for i in list:
             try:
                 title = str(i.find_element_by_tag_name("a").text).strip().replace("/","_")
+                if "공지" in title :
+                    continue
+                title = convert(title)
                 href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()
                 comment_count = str("X").strip()
                 result.append({'title': title, 'href': href, 'comment_count': comment_count, 'site':site, 'timestamp': timestamp})
@@ -349,10 +405,12 @@ def fetch(site) :
 ########################################
 # ######################################################
 
-#phantomjs_path = "C://webdriver//chromedriver.exe"
-phantomjs_path = "/usr/lib/chromium-browser/chromedriver"
+def prepareWebDriver() :
+    # phantomjs_path = "C://webdriver//chromedriver.exe"
+    phantomjs_path = "/usr/lib/chromium-browser/chromedriver"
 
-# br = webdriver.PhantomJS(executable_path=phantomjs_path, service_log_path=os.path.devnull)
-options = webdriver.ChromeOptions()
-options.add_argument('headless')
-br = webdriver.Chrome(executable_path=phantomjs_path, service_log_path=os.path.devnull, chrome_options=options)
+    # br = webdriver.PhantomJS(executable_path=phantomjs_path, service_log_path=os.path.devnull)
+    options = webdriver.ChromeOptions()
+    options.add_argument('headless')
+    br = webdriver.Chrome(executable_path=phantomjs_path, service_log_path=os.path.devnull, chrome_options=options)
+    return br
