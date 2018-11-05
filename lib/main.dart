@@ -55,7 +55,14 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('컴모 - 커뮤니티 모아보기', style: TextStyle(fontFamily: 'NotoSansKR', fontWeight: FontWeight.w700),)),
+      appBar: AppBar(
+        automaticallyImplyLeading: true,
+        titleSpacing: 10.0,
+        leading: Image.asset("asset/" + "burger.png", fit: BoxFit.scaleDown, height: 2.toDouble(),),
+        title : Text('컴모 - 커뮤니티 모아보기', style: TextStyle(fontFamily: 'NotoSansKR', fontWeight: FontWeight.w700),)
+        
+         
+      ),
       body: _buildBody(context),
     );
   }
@@ -106,7 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 padding: EdgeInsets.only(bottom: 0.0, top: 0.0, left: 0.0, right: 0.0),
                 textTheme: ButtonTextTheme.accent,
                 onPressed: () {
-                  Share.share('컴모 - 커뮤니티 모아보기 앱으로 편하게 보세요! \n\n' + record.title + '\n' + record.href);
+                  Share.share(record.title + '\n' + record.href + '\n\n' '컴모 - 커뮤니티 모아보기 앱으로 편하게 보세요! \n https://play.google.com/store/apps/details?id=com.machinelearningkorea.communitymoa');
                 },
             ),
             contentPadding: EdgeInsets.only(bottom: 5.0, top: 5.0, left: 10.0, right: 0.0)
