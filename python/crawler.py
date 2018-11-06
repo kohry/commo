@@ -12,7 +12,7 @@ def convert(str) :
 
 def fetch(site, br) :
 
-    timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+    timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M')
     list=[]
 
     if site == "PPOMPPU":
@@ -368,6 +368,8 @@ def fetch(site, br) :
                 title = str(i.find_element_by_tag_name("a").text).strip().replace("/","_")
                 if "공지" in title :
                     continue
+                if "힛갤에 등록된 게시물은 방송에" in title :
+                    continue
                 title = convert(title)
                 href = str(i.find_element_by_tag_name("a").get_attribute("href")).strip()
                 comment_count = str("X").strip()
@@ -405,12 +407,4 @@ def fetch(site, br) :
 ########################################
 # ######################################################
 
-def prepareWebDriver() :
-    # phantomjs_path = "C://webdriver//chromedriver.exe"
-    phantomjs_path = "/usr/lib/chromium-browser/chromedriver"
 
-    # br = webdriver.PhantomJS(executable_path=phantomjs_path, service_log_path=os.path.devnull)
-    options = webdriver.ChromeOptions()
-    options.add_argument('headless')
-    br = webdriver.Chrome(executable_path=phantomjs_path, service_log_path=os.path.devnull, chrome_options=options)
-    return br
