@@ -4,6 +4,11 @@ import 'package:flutter/material.dart';
 import 'second_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share/share.dart';
+import 'package:firebase_admob/firebase_admob.dart';
+
+const String AD_MOB_APP_ID = 'ca-app-pub-5637469297137210~5362351240';
+const String AD_MOB_TEST_DEVICE = 'test_device_id - run ad then check device logs for value';
+const String AD_MOB_AD_ID = 'ca-app-pub-5637469297137210/1323443002';
 
 void main() => runApp(MyApp());
 
@@ -33,13 +38,48 @@ class _MyHomePageState extends State<MyHomePage> {
 
   var _lastRow = 0;
   final FETCH_ROW = 50;
-
   var stream;
+
   ScrollController _scrollController = new ScrollController();
+  BannerAd _bannerAd;
+
+  static final MobileAdTargetingInfo targetingInfo = new MobileAdTargetingInfo(
+    childDirected: false,
+    designedForFamilies: false,
+    gender: MobileAdGender.unknown, // or MobileAdGender.female, MobileAdGender.unknown
+    testDevices: <String>[AD_MOB_TEST_DEVICE],
+  );
+
+  BannerAd createBannerAd() {
+    return new BannerAd(
+      adUnitId: AD_MOB_AD_ID,
+      targetingInfo: targetingInfo,
+      size: AdSize.banner,
+      listener: (MobileAdEvent event) {
+        print("BannerAd event is $event");
+      },
+    );
+  }
+
+
+  @override
+  void dispose() {
+    _bannerAd?.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
     super.initState();
+//
+    FirebaseAdMob.instance.initialize(appId: 'ca-app-pub-5637469297137210~5362351240');
+    _bannerAd = createBannerAd()..load()..show(
+      // Positions the banner ad 60 pixels from the bottom of the screen
+//      anchorOffset: 3.0,
+//      // Banner Position
+//      anchorType: AnchorType.bottom,
+    );
+
     stream = newStream();
     _scrollController.addListener(() {
       if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
@@ -54,16 +94,20 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+//
+    List<Widget> fakeBottomButtons = new List<Widget>();
+    fakeBottomButtons.add(new Container(height:40.0,));
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
         titleSpacing: 10.0,
+        elevation: 1.0,
         leading: Image.asset("asset/" + "burger.png", fit: BoxFit.scaleDown, height: 2.toDouble(),),
         title : Text('컴모 - 커뮤니티 모아보기', style: TextStyle(fontFamily: 'NotoSansKR', fontWeight: FontWeight.w700),)
-        
-         
       ),
       body: _buildBody(context),
+      persistentFooterButtons: fakeBottomButtons,
     );
   }
 
@@ -118,19 +162,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             contentPadding: EdgeInsets.only(bottom: 5.0, top: 5.0, left: 10.0, right: 0.0)
           ),
-//          ButtonTheme.bar(
-////
-//            child: ButtonBar(
-//              children: <Widget>[
-//                FlatButton(
-//                  child: const Text('공유하기'),
-//                  onPressed: () {
-//                    Share.share('컴모 - 커뮤니티 모아보기 앱으로 편하게 보세요! \n\n' + record.title + '\n' + record.href);
-//                  },
-//                ),
-//              ],
-//            ),
-//          ),
+
         ],
       ),
     );
