@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AD_UNIT_ID_FOR_BANNER_TEST</key>
+	<string>ca-app-pub-3940256099942544/2934735716</string>
+	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
+	<string>ca-app-pub-3940256099942544/4411468910</string>
+	<key>CLIENT_ID</key>
+	<string>69086462362-elb2rtg1kvlkeag8mhoa09t1ga79d7am.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.69086462362-elb2rtg1kvlkeag8mhoa09t1ga79d7am</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAEln6Ln0pROAUs-qZnVc25uoSzlUbOSbI</string>
+	<key>GCM_SENDER_ID</key>
+	<string>69086462362</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.machinelearningkorea.communitymoa</string>
+	<key>PROJECT_ID</key>
+	<string>commo-d07de</string>
+	<key>STORAGE_BUCKET</key>
+	<string>commo-d07de.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<true></true>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<false></false>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:69086462362:ios:4c1f72ce2e1c49a4</string>
+	<key>DATABASE_URL</key>
+	<string>https://commo-d07de.firebaseio.com</string>
+</dict>
+</plist>

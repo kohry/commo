@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: '컴모 - 커뮤니티 모아보기',
       home: MyHomePage(),
       theme: ThemeData(
