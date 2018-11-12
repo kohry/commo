@@ -8,7 +8,7 @@ import 'package:firebase_admob/firebase_admob.dart';
 
 const String AD_MOB_APP_ID = 'ca-app-pub-5637469297137210~5362351240';
 const String AD_MOB_TEST_DEVICE = 'test_device_id - run ad then check device logs for value';
-const String AD_MOB_AD_ID = 'ca-app-pub-5637469297137210/1323443002';
+const String AD_MOB_AD_ID = 'ca-app-pub-5637469297137210/8187324125';
 
 void main() => runApp(MyApp());
 
@@ -40,6 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
   var _lastRow = 0;
   final FETCH_ROW = 50;
   var stream;
+  final Set<Record> _saved = new Set<Record>();   // Add this line.
 
   ScrollController _scrollController = new ScrollController();
   BannerAd _bannerAd;
@@ -59,6 +60,49 @@ class _MyHomePageState extends State<MyHomePage> {
       listener: (MobileAdEvent event) {
         print("BannerAd event is $event");
       },
+    );
+  }
+
+  void _pushSaved() {
+    Navigator.of(context).push(
+      new MaterialPageRoute<void>(   // Add 20 lines from here...
+        builder: (BuildContext context) {
+          final Iterable<ListTile> tiles = _saved.map(
+                (Record record) {
+              return new ListTile(
+                  leading: Image.asset("asset/" + record.site + ".jpg", fit: BoxFit.fitHeight, width: 50.toDouble(),),
+                  title: Text(record.title, style: TextStyle(fontFamily: 'NotoSansKR', fontWeight: FontWeight.w500),),
+                  subtitle: Text(record.site + " : " + record.timestamp, style: TextStyle(fontFamily: 'NotoSansKR')),
+                  onTap: () => _launchURL(record.href),
+                  trailing: FlatButton (
+                        child: new Icon(Icons.share),
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        padding: EdgeInsets.only(bottom: 0.0, top: 0.0, left: 0.0, right: 0.0),
+                        textTheme: ButtonTextTheme.normal,
+                        onPressed: () {
+                          Share.share(record.title + '\n' + record.href + '\n\n' '컴모 - 커뮤니티 모아보기 앱으로 편하게 보세요! \n https://play.google.com/store/apps/details?id=com.machinelearningkorea.communitymoa');
+                        },
+                      ),
+
+                  contentPadding: EdgeInsets.only(bottom: 5.0, top: 5.0, left: 10.0, right: 0.0)
+              );
+            },
+          );
+          final List<Widget> divided = ListTile
+              .divideTiles(
+            context: context,
+            tiles: tiles,
+          )
+              .toList();
+          return new Scaffold(         // Add 6 lines from here...
+            appBar: new AppBar(
+              title: Text('즐겨찾기', style: TextStyle(fontFamily: 'NotoSansKR', fontWeight: FontWeight.w700),),
+              elevation: 1.0,
+            ),
+            body: new ListView(children: divided),
+          );
+        },
+      ),                           // ... to here.
     );
   }
 
@@ -104,6 +148,17 @@ class _MyHomePageState extends State<MyHomePage> {
         automaticallyImplyLeading: true,
         titleSpacing: 10.0,
         elevation: 1.0,
+        actions: <Widget>[
+
+          IconButton(
+            icon: new Icon(Icons.refresh),
+            onPressed: (){
+              _scrollController.animateTo(0.0, duration: new Duration(seconds: 1), curve: Curves.ease);
+              return setState(() => stream = newStream());
+            }
+          ),
+          new IconButton(icon: const Icon(Icons.list), onPressed: _pushSaved),
+        ],
         leading: Image.asset("asset/" + "burger.png", fit: BoxFit.scaleDown, height: 2.toDouble(),),
         title : Text('컴모 - 커뮤니티 모아보기', style: TextStyle(fontFamily: 'NotoSansKR', fontWeight: FontWeight.w700),)
       ),
@@ -142,6 +197,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
     final record = Record.fromSnapshot(data);
+    final bool alreadySaved = _saved.contains(record);
 
     return Card(
       child: Column(
@@ -153,14 +209,40 @@ class _MyHomePageState extends State<MyHomePage> {
             title: Text(record.title, style: TextStyle(fontFamily: 'NotoSansKR', fontWeight: FontWeight.w500),),
             subtitle: Text(record.site + " : " + record.timestamp, style: TextStyle(fontFamily: 'NotoSansKR')),
             onTap: () => _launchURL(record.href),
-            trailing: FlatButton(
-                child: Text('공유'),
+            trailing: Row(
+
+//              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+//              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+              Container(height: 30.0, width: 40.0,child:FlatButton (
+                child: new Icon(Icons.share),
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 padding: EdgeInsets.only(bottom: 0.0, top: 0.0, left: 0.0, right: 0.0),
-                textTheme: ButtonTextTheme.accent,
+                textTheme: ButtonTextTheme.normal,
                 onPressed: () {
                   Share.share(record.title + '\n' + record.href + '\n\n' '컴모 - 커뮤니티 모아보기 앱으로 편하게 보세요! \n https://play.google.com/store/apps/details?id=com.machinelearningkorea.communitymoa');
                 },
-            ),
+              ),),
+              Container(height: 30.0, width: 60.0,child:FlatButton(
+                child: new Icon(   // Add the lines from here...
+                  alreadySaved ? Icons.favorite : Icons.favorite_border,
+                  color: alreadySaved ? Colors.red : null,
+                ),
+                padding: EdgeInsets.only(bottom: 0.0, top: 0.0, left: 0.0, right: 0.0),
+                textTheme: ButtonTextTheme.normal,
+                onPressed: () {
+                  setState(() {
+                    if (alreadySaved) {
+                      _saved.remove(record);
+                    } else {
+                      _saved.add(record);
+                    }
+                  });
+                },
+              ),),
+            ],),
+
             contentPadding: EdgeInsets.only(bottom: 5.0, top: 5.0, left: 10.0, right: 0.0)
           ),
 
@@ -187,6 +269,15 @@ class Record {
   final String comment_count;
   final String timestamp;
   final DocumentReference reference;
+
+  @override
+  bool operator==(other) {
+    if (other is Record && other.title == title && other.href == href) return true;
+    else return false;
+  }
+
+  int get hashCode => title.hashCode + href.hashCode;
+
 
   Record.fromMap(Map<String, dynamic> map, {this.reference})
       : title = map['title'],
