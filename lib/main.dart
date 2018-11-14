@@ -39,6 +39,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+  final key = new GlobalKey<ScaffoldState>();
+
   var _lastRow = 0;
   final FETCH_ROW = 50;
   var stream;
@@ -68,10 +70,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _pushSaved() {
+
+
+
     Navigator.of(context).push(
       new MaterialPageRoute<void>(   // Add 20 lines from here...
-        builder: (BuildContext context) {
-          final Iterable<Card> tiles = _saved.map(
+        maintainState: true,
+        builder: (BuildContext c) {
+          final Iterable<Card> list = _saved.map(
                 (Record record) {
                   final bool alreadySaved = _saved.contains(record);
                   return Card(
@@ -79,16 +85,12 @@ class _MyHomePageState extends State<MyHomePage> {
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         ListTile(
-//            leading: Icon(Icons.album),
                             leading: Image.asset("asset/" + record.site + ".jpg", fit: BoxFit.fitHeight, width: 50.toDouble(),),
                             title: Text(record.title, style: TextStyle(fontFamily: 'NotoSansKR', fontWeight: FontWeight.w500),),
                             subtitle: Text(record.site + " : " + record.timestamp, style: TextStyle(fontFamily: 'NotoSansKR')),
                             onTap: () => _launchURL(record.href),
                             trailing: Row(
-
-//              crossAxisAlignment: CrossAxisAlignment.end,
                               mainAxisSize: MainAxisSize.min,
-//              mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 Container(height: 30.0, width: 40.0,child:FlatButton (
                                   child: new Icon(Icons.share),
@@ -110,11 +112,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                       if (alreadySaved) {
                                         _saved.remove(record);
                                         recordDatabase.deleteRecord(record.title);
-                                        print("adding : " + record.title);
-                                      } else {
-                                        _saved.add(record);
-                                        recordDatabase.updateRecord(convertFromRecord(record));
-                                        print("adding : " + record.title);
+                                        print("remove : " + record.title);
+                                        key.currentState.showSnackBar(new SnackBar(content: Text("다음부터는 해당하는 즐겨찾기 \n (" + record.title + ") 가 나타나지 않습니다.")));
                                       }
                                     });
                                   },
@@ -132,18 +131,19 @@ class _MyHomePageState extends State<MyHomePage> {
           final List<Widget> divided = ListTile
               .divideTiles(
             context: context,
-            tiles: tiles,
+            tiles: list,
           ).toList();
 
           //광고 보여주기용 placeholder
           List<Widget> fakeBottomButtons = new List<Widget>();
           fakeBottomButtons.add(new Container(height:40.0,));
 
-          return new Scaffold(         // Add 6 lines from here...
+          return new Scaffold(
             appBar: new AppBar(
               title: Text('즐겨찾기', style: TextStyle(fontFamily: 'NotoSansKR', fontWeight: FontWeight.w700),),
               elevation: 1.0,
             ),
+            key: key,
             body: new ListView(children: divided),
             persistentFooterButtons: fakeBottomButtons,
           );
