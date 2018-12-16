@@ -58,16 +58,16 @@ class _MyHomePageState extends State<MyHomePage> {
     testDevices: <String>[AD_MOB_TEST_DEVICE],
   );
 
-  BannerAd createBannerAd() {
-    return new BannerAd(
-      adUnitId: AD_MOB_AD_ID,
-      targetingInfo: targetingInfo,
-      size: AdSize.banner,
-      listener: (MobileAdEvent event) {
-        print("BannerAd event is $event");
-      },
-    );
-  }
+//  BannerAd createBannerAd() {
+//    return new BannerAd(
+//      adUnitId: AD_MOB_AD_ID,
+//      targetingInfo: targetingInfo,
+//      size: AdSize.banner,
+//      listener: (MobileAdEvent event) {
+//        print("BannerAd event is $event");
+//      },
+//    );
+//  }
 
   void _pushSaved() {
 
@@ -135,8 +135,8 @@ class _MyHomePageState extends State<MyHomePage> {
           ).toList();
 
           //광고 보여주기용 placeholder
-          List<Widget> fakeBottomButtons = new List<Widget>();
-          fakeBottomButtons.add(new Container(height:40.0,));
+//          List<Widget> fakeBottomButtons = new List<Widget>();
+//          fakeBottomButtons.add(new Container(height:40.0,));
 
           return new Scaffold(
             appBar: new AppBar(
@@ -145,7 +145,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             key: key,
             body: new ListView(children: divided),
-            persistentFooterButtons: fakeBottomButtons,
+//            persistentFooterButtons: fakeBottomButtons,
           );
         },
       ),                           // ... to here.
@@ -181,13 +181,13 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
 //
-    FirebaseAdMob.instance.initialize(appId: 'ca-app-pub-5637469297137210~5362351240');
-    _bannerAd = createBannerAd()..load()..show(
-      // Positions the banner ad 60 pixels from the bottom of the screen
-//      anchorOffset: 3.0,
-//      // Banner Position
-//      anchorType: AnchorType.bottom,
-    );
+//    FirebaseAdMob.instance.initialize(appId: 'ca-app-pub-5637469297137210~5362351240');
+//    _bannerAd = createBannerAd()..load()..show(
+//      // Positions the banner ad 60 pixels from the bottom of the screen
+////      anchorOffset: 3.0,
+////      // Banner Position
+////      anchorType: AnchorType.bottom,
+//    );
 
     stream = newStream();
     _scrollController.addListener(() {
@@ -227,7 +227,7 @@ class _MyHomePageState extends State<MyHomePage> {
         title : Text('컴모 - 커뮤니티 모아보기', style: TextStyle(fontFamily: 'NotoSansKR', fontWeight: FontWeight.w700),)
       ),
       body: _buildBody(context),
-      persistentFooterButtons: fakeBottomButtons,
+//      persistentFooterButtons: fakeBottomButtons,
     );
   }
 
