@@ -191,6 +191,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     stream = newStream();
     _scrollController.addListener(() {
+      print('scroll controller reached the end');
       if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
         setState( () => stream = newStream() );
       }
@@ -198,6 +199,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Stream<QuerySnapshot> newStream() {
+    print('new Stream');
+    print('_lastRow : ' + _lastRow.toString() + '//' + "FETCH_ROW : " + FETCH_ROW.toString() );
     return Firestore.instance.collection('posts').orderBy("timestamp", descending: true).limit(FETCH_ROW * (_lastRow + 1)).snapshots();
   }
 
@@ -249,9 +252,13 @@ class _MyHomePageState extends State<MyHomePage> {
         controller: _scrollController,
         itemCount: snapshot.length,
         itemBuilder: (context, i) {
+          print('i : ' + i.toString());
           final currentRow = (i + 1) ~/ FETCH_ROW;
-          if (_lastRow != currentRow)  {
+          print('currentRow ::' +  currentRow.toString());
+          if (_lastRow != currentRow && currentRow > _lastRow)  {
+            print('LastRow ::' +  _lastRow.toString());
             _lastRow = currentRow;
+            print('after ) LastRow ::' +  _lastRow.toString());
           }
           return _buildListItem(context, snapshot[i]);
         });
