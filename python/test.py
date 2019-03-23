@@ -7,9 +7,13 @@ from random import shuffle
 import urllib.request
 import hashlib
 from random import randint
-
 from selenium import webdriver
+import time
+import datetime
+import re
+import random
 import os
+import traceback
 
 print('start')
 
@@ -43,13 +47,7 @@ def prepareWebDriver() :
     br = webdriver.Chrome(executable_path=phantomjs_path, service_log_path=os.path.devnull, chrome_options=options)
     return br
 
-from selenium import webdriver
-import os
-import traceback
-import time
-import datetime
-import re
-import random
+
 
 # title 등에서 나오는 지저분한 형태 다 교체
 def convert(str) :
@@ -57,34 +55,40 @@ def convert(str) :
     b = a.split("\n")[0].strip()
     return b
 
-# 링크를 가지고 안에 있는 것들을 빼낸다.
-def get_content(site, url, title) :
+
+
+# 사이트별 특화로직
+def __get_content(site, url, title) :
 
     br = prepareWebDriver()
     br.get(url)
 
-    if site == "PPOMPPU":
-        text = br.find_element_by_class_name("cont").text
-        image_list = [] # href만을 따온다.
-        storage_image_list = [] # 이미지 storage 경로를 따온다.
-        try :
+    image_list = []  # href만을 따온다.
+    storage_image_list = []  # 이미지 storage 경로를 따온다.
+    content_text = ""
+
+    def ___get_image_content(dom) :
+        image_href = dom.get_attribute("src")  # 이미지의 링크를 따와서
+        image_list.append(image_href)
+        upload_storage_image_key = __upload_image_storage(image_href, title)
+        storage_image_list.append(upload_storage_image_key)
+
+    try :
+        if site == "PPOMPPU": # 교체 ---------------------------------------
+            content_text = br.find_element_by_class_name("cont").text
             for img in br.find_element_by_class_name("cont").find_elements_by_tag_name("img") :
-                image_href = img.get_attribute("src") # 이미지의 링크를 따와서
-                image_list.append(image_href)
+                ___get_image_content(img)
 
-                upload_storage_image_key = upload_image_storage(image_href, title)
-                storage_image_list.append(upload_storage_image_key)
+    except :
+        print("error:")
+        traceback.print_exc()
 
-        except :
-            print("error:")
-            traceback.print_exc()
-    br.quit()
+    finally:
+        br.quit()
 
-    return text, image_list, storage_image_list
+    return content_text, image_list, storage_image_list
 
-    # text split당 루프를 돌면서, 하나하나 저장을 한다음에, 주제 도출을 한다. 총 3개
-
-def upload_image_storage(href,title) :
+def __upload_image_storage(href,title) :
     st = storage.bucket()
 
     # 0~100사이의 대충 아무 파일이나 잡고 저장한다.
@@ -101,39 +105,49 @@ def upload_image_storage(href,title) :
 
     return imageKey
 
+# 사이트별 특화로직
 def fetch(site, br) :
 
     timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M')
-    list =[]
 
-    if site == "PPOMPPU":
+    content_candidate =[]
+    result = []
+    content = []
 
-        br.get('http://m.ppomppu.co.kr/new/#hot_bbs')
-        try:
-            list = br.find_element_by_id("mainList").find_elements_by_tag_name("li")
-        except:
-            print("not parsed from the start")
-        result = []
-        content = []
-        for i in list:
-            try :
-                title = str(i.find_element_by_class_name("main_text02").text).replace("/" ,"_")
+    try:
+        if site == "PPOMPPU": # 교체 --------------------------------------------
+            br.get('http://m.ppomppu.co.kr/new/#hot_bbs')
+            content_candidate = br.find_element_by_id("mainList").find_elements_by_tag_name("li")
+
+    except:
+        print("not parsed from the start")
+
+    for i in content_candidate:
+        try :
+
+            href = str(i.find_element_by_tag_name("a").get_attribute("href"))
+            key = str(time.time()) + "." + str(random.randint(1 ,10000))
+            title = ""
+
+            if site == "PPOMPPU" : # 교체 -------------------------------------
+                title = str(i.find_element_by_class_name("main_text02").text).replace("/", "_")
                 if "공지" in title :
                     continue
-                key = str(time.time()) + "." + str(random.randint(1 ,10000))
-                title = convert(title)
-                href = str(i.find_element_by_tag_name("a").get_attribute("href"))
+            title = convert(title)
 
-                text, image, storage_source = get_content(site, href, title) # text 와 image의 링크 및 image source파일 (storage에 저장된거) 모두를 빼온다.
+            if title == "" :
+                continue
 
-                comment_count = str(i.find_element_by_class_name("main_list_comment").text)
-                result.append({'title' : title, 'href' : href, 'comment_count' : comment_count, 'site' :site, 'timestamp': timestamp, 'key' : key})
-                content.append({'key' : key, 'text' : text, 'image' : image , 'timestamp': timestamp, 'title':title, 'storage_source' : storage_source  }) # 이미지 텍스트 저장.
+            text, image, storage_source = __get_content(site, href, title) # text 와 image의 링크 및 image source파일 (storage에 저장된거) 모두를 빼온다.
 
-            except:
-                print("error:")
-                traceback.print_exc()
-        print(result)
+            comment_count = str(i.find_element_by_class_name("main_list_comment").text)
+            result.append({'title' : title, 'href' : href, 'comment_count' : comment_count, 'site' :site, 'timestamp': timestamp, 'key' : key})
+            content.append({'key' : key, 'text' : text, 'image' : image , 'timestamp': timestamp, 'title':title, 'storage_source' : storage_source  }) # 이미지 텍스트 저장.
+
+        except:
+            print("error:")
+            traceback.print_exc()
+    print(result)
 
     return result, content
 
