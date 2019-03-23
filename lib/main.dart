@@ -112,7 +112,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                       if (alreadySaved) {
                                         _saved.remove(record);
                                         recordDatabase.deleteRecord(record.title);
-                                        print("remove : " + record.title);
                                         key.currentState.showSnackBar(new SnackBar(content: Text("다음부터는 해당하는 즐겨찾기 \n (" + record.title + ") 가 나타나지 않습니다.")));
                                       }
                                     });
@@ -175,7 +174,6 @@ class _MyHomePageState extends State<MyHomePage> {
     //시작할때 데이터베이스 로딩해서 record에 담아둔다.
     recordDatabase.init().whenComplete((){
       recordDatabase.getRecords().then((list){
-        print(list.toString());
         _saved.addAll(list.map((savedRecord)=> convertToRecord(savedRecord)));
       });
     });
@@ -191,7 +189,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
     stream = newStream();
     _scrollController.addListener(() {
-      print('scroll controller reached the end');
       if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
         setState( () => stream = newStream() );
       }
@@ -199,8 +196,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Stream<QuerySnapshot> newStream() {
-    print('new Stream');
-    print('_lastRow : ' + _lastRow.toString() + '//' + "FETCH_ROW : " + FETCH_ROW.toString() );
     return Firestore.instance.collection('posts').orderBy("timestamp", descending: true).limit(FETCH_ROW * (_lastRow + 1)).snapshots();
   }
 
@@ -235,7 +230,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildBody(BuildContext context) {
-    print("warning");
     return StreamBuilder<QuerySnapshot>(
       stream: stream,
       builder: (context, snapshot) {
@@ -252,13 +246,9 @@ class _MyHomePageState extends State<MyHomePage> {
         controller: _scrollController,
         itemCount: snapshot.length,
         itemBuilder: (context, i) {
-          print('i : ' + i.toString());
           final currentRow = (i + 1) ~/ FETCH_ROW;
-          print('currentRow ::' +  currentRow.toString());
           if (_lastRow != currentRow && currentRow > _lastRow)  {
-            print('LastRow ::' +  _lastRow.toString());
             _lastRow = currentRow;
-            print('after ) LastRow ::' +  _lastRow.toString());
           }
           return _buildListItem(context, snapshot[i]);
         });
@@ -305,11 +295,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     if (alreadySaved) {
                       _saved.remove(record);
                       recordDatabase.deleteRecord(record.title);
-                      print("adding : " + record.title);
                     } else {
                       _saved.add(record);
                       recordDatabase.updateRecord(convertFromRecord(record));
-                      print("adding : " + record.title);
                     }
                   });
                 },
@@ -326,7 +314,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _launchURL(String url) async {
-    print(url);
     if (await canLaunch(url)) {
       await launch(url);
     } else {
