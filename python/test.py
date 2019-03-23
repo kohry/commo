@@ -5,6 +5,7 @@ from firebase_admin import firestore
 from firebase_admin import storage
 from random import shuffle
 import urllib.request
+import hashlib
 from random import randint
 
 from selenium import webdriver
@@ -90,7 +91,7 @@ def upload_image_storage(href,title) :
     outfile = str(randint(0, 100))
     urllib.request.urlretrieve(href, outfile)
 
-    imageKey = title.encode("utf-8")
+    imageKey = hashlib.sha1(title.encode("utf-8")).hexdigest() + str(time.time())
 
     # 그리고 이미지 키에 따라서 저장한다.
     blob = st.blob(imageKey)
