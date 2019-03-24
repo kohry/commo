@@ -19,22 +19,22 @@ print('start')
 
 list = [
     "PPOMPPU"
-    # "BOBAE",
-    # "RULIWEB",
-    # "INVEN",
-    # "SLR",
-    # "FM",
-    # "UNIV",
-    # "DOGDRIP",
-    # "CLIEN",
-    # "FOMOS",
-    # "MLB",
-    # "DDANZI",
-    # "INSTIZ",
-    # "YGOSU",
-    # "NATE",
-    # "DC",
-    # "TODAY"
+     "BOBAE",
+     "RULIWEB",
+     "INVEN",
+     "SLR",
+     "FM",
+     "UNIV",
+     "DOGDRIP",
+     "CLIEN",
+     "FOMOS",
+     "MLB",
+     "DDANZI",
+     "INSTIZ",
+     "YGOSU",
+     "NATE",
+     "DC",
+     "TODAY"
 ]
 
 def prepareWebDriver() :
@@ -74,10 +74,64 @@ def __get_content(site, url, title) :
         storage_image_list.append(upload_storage_image_key)
 
     try :
+
+        content = ""
+        content_text = ""
+
         if site == "PPOMPPU": # 교체 ---------------------------------------
-            content_text = br.find_element_by_class_name("cont").text
-            for img in br.find_element_by_class_name("cont").find_elements_by_tag_name("img") :
-                ___get_image_content(img)
+            content = br.find_element_by_class_name("cont")
+
+        if site == "BOBAE":
+            content = br.find_element_by_class_name("article-body")
+
+        if site == "RULIWEB":
+            content = br.find_element_by_class_name("view_content")
+
+        if site == "INVEN":
+            content = br.find_element_by_class_name("articleContent")
+
+        if site == "SLR":
+            content = br.find_element_by_id("userct")
+
+        if site == "FM":
+            content = br.find_element_by_class_name("rb_body")
+
+        if site == "UNIV":
+            content = br.find_element_by_class_name("wrap_body")
+
+        if site == "DOGDRIP":
+            content = br.find_element_by_id("article_1")
+
+        if site == "CLIEN":
+            content = br.find_element_by_class_name("post_article")
+
+        if site == "FOMOS":
+            content = br.find_element_by_class_name("view_cont")
+
+        if site == "MLB":
+            content = br.find_element_by_class_name("ar_txt")
+
+        if site == "DDANZI":
+            content = br.find_element_by_class_name("read_content")
+
+        if site == "INSTIZ":
+            content = br.find_element_by_id("memo_content_1")
+
+        if site == "YGOSU":
+            content = br.find_element_by_class_name("article")
+
+        if site == "NATE":
+            content = br.find_element_by_class_name("content")
+
+        if site == "DC":
+            content = br.find_element_by_class_name("thum-txt")
+
+        if site == "TODAY":
+            content = br.find_element_by_class_name("viewContent")
+
+        content_text = content.text
+        for img in content.find_elements_by_tag_name("img"):
+            ___get_image_content(img)
 
     except :
         print("error:")
@@ -119,6 +173,73 @@ def fetch(site, br) :
             br.get('http://m.ppomppu.co.kr/new/#hot_bbs')
             content_candidate = br.find_element_by_id("mainList").find_elements_by_tag_name("li")
 
+        if site == "BOBAE" :
+            br.get('http://m.bobaedream.co.kr/board/new_writing/best')
+            content_candidate = br.find_element_by_class_name("rank").find_elements_by_class_name("info")
+
+        if site == "RULIWEB" :
+            br.get('https://m.ruliweb.com/best')
+            content_candidate = br.find_element_by_id("board_list").find_elements_by_class_name("title")
+
+        if site == "INVEN" :
+            br.get('http://m.inven.co.kr/board/powerbbs.php?come_idx=2097')
+            content_candidate = br.find_element_by_id("boardList").find_elements_by_class_name("articleSubject")
+
+        if site == "SLR" :
+            br.get('http://m.slrclub.com/l/hot_article')
+            content_candidate = br.find_element_by_class_name("list").find_elements_by_class_name("article")
+
+        if site == "FM" :
+            br.get('https://m.fmkorea.com/best')
+            content_candidate = br.find_element_by_class_name("fm_best_widget").find_elements_by_class_name("li")
+
+
+        if site == "UNIV" :
+            br.get('http://m.humoruniv.com/board/list.html?table=pds')
+            content_candidate = br.find_element_by_id("list_body").find_elements_by_class_name("list_body_href")
+
+        if site == "DOGDRIP":
+            br.get('https://www.dogdrip.net/dogdrip')
+            content_candidate = br.find_element_by_class_name("list").find_elements_by_tag_name("li")
+
+        if site == "CLIEN":
+            br.get('https://m.clien.net/service/group/clien_all?&od=T33')
+            content_candidate = br.find_element_by_class_name("content_list").find_elements_by_class_name("list_item")
+
+        if site == "FOMOS":
+            br.get('http://m.fomos.kr/talk/article_list?bbs_id=1')
+            content_candidate = br.find_element_by_id("contents").find_elements_by_class_name("ut_item")
+
+        if site == "MLB":
+            br.get('http://mlbpark.donga.com/mp/best.php?b=bullpen')
+            content_candidate = br.find_element_by_class_name("tbl_type01").find_elements_by_tag_name("tr")
+
+        if site == "DDANZI":
+            br.get('http://www.ddanzi.com/index.php?mid=free&statusList=HOT%2CHOTBEST')
+            content_candidate = br.find_element_by_id("list_style").find_elements_by_class_name("title")
+
+        if site == "INSTIZ":
+            br.get('https://www.instiz.net/bbs/list.php?id=pt&srt=3')
+            content_candidate = br.find_element_by_id("mainboard").find_elements_by_id("subject")
+
+        if site == "YGOSU":
+            br.get('https://m.ygosu.com/board/real_article')
+            content_candidate = br.find_element_by_class_name("bd_list").find_elements_by_class_name("tit")
+
+        if site == "NATE":
+            br.get('https://m.pann.nate.com/talk/today')
+            content_candidate = br.find_element_by_class_name("list").find_elements_by_tag_name("li")
+
+        if site == "DC":
+            br.get('https://m.dcinside.com/board/hit')
+            content_candidate = br.find_element_by_class_name("gall_list").find_elements_by_class_name("gall_tit")
+
+        if site == "TODAY":
+            br.get('http://www.todayhumor.co.kr/board/list.php?table=bestofbest')
+            content_candidate = br.find_elements_by_class_name("subject")
+
+
+
     except:
         print("not parsed from the start")
 
@@ -131,12 +252,61 @@ def fetch(site, br) :
 
             if site == "PPOMPPU" : # 교체 -------------------------------------
                 title = str(i.find_element_by_class_name("main_text02").text).replace("/", "_")
-                if "공지" in title :
-                    continue
-            title = convert(title)
 
-            if title == "" :
+            if site == "BOBAE":
+                title = str(i.find_element_by_class_name("cont").text).strip().replace("/","_")
+
+            if site == "RULIWEB":
+                title = str(i.find_element_by_class_name("subject_link").text).strip().replace("/","_")
+
+            if site == "INVEN":
+                title = str(i.find_element_by_class_name("title").text).strip().replace("/","_")
+
+            if site == "SLR":
+                title = str(i.find_element_by_tag_name("a").text).strip().replace("/","_")
+
+            if site == "FM":
+                title = str(i.find_element_by_class_name("title").text).strip().replace("/","_")
+
+            if site == "UNIV":
+                title = str(i.find_element_by_class_name("li").text).strip().replace("/","_")
+
+            if site == "DOGDRIP":
+                title = str(i.find_element_by_tag_name("a").text).strip().replace("/","_")
+
+            if site == "CLIEN":
+                title = str(i.find_element_by_class_name("list_subject").text).strip().replace("/","_")
+
+
+
+            if site == "FOMOS":
+                title = str(i.find_element_by_tag_name("a").text).strip().replace("/","_")
+
+            if site == "MLB":
+                title = str(i.find_element_by_class_name("t_left").text).strip().replace("/","_")
+
+            if site == "DDANZI":
+                title = str(i.find_element_by_tag_name("a").text).strip().replace("/","_")
+
+            if site == "INSTIZ":
+                title = str(i.find_element_by_tag_name("a").text).strip().replace("/","_")
+
+            if site == "YGOSU":
+                title = str(i.find_element_by_tag_name("a").text).strip().replace("/","_")
+
+            if site == "NATE":
+                title = str(i.find_element_by_tag_name("a").text).strip().replace("/","_")
+
+            if site == "DC":
+                title = str(i.find_element_by_tag_name("a").text).strip().replace("/","_")
+
+            if site == "TODAY":
+                title = str(i.find_element_by_tag_name("a").text).strip().replace("/","_")
+
+            if "공지" in title or title == "" :
                 continue
+
+            title = convert(title)
 
             text, image, storage_source = __get_content(site, href, title) # text 와 image의 링크 및 image source파일 (storage에 저장된거) 모두를 빼온다.
 
