@@ -6,6 +6,7 @@ import 'package:share/share.dart';
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:communitymoa/pravacy.dart';
 
 const String AD_MOB_APP_ID = 'ca-app-pub-5637469297137210~5362351240';
 const String AD_MOB_TEST_DEVICE = 'test_device_id - run ad then check device logs for value';
@@ -206,6 +207,29 @@ class _MyHomePageState extends State<MyHomePage> {
     fakeBottomButtons.add(new Container(height:40.0,));
 
     return Scaffold(
+
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              child: Text('유머줍줍', style: TextStyle(fontFamily: 'DoHyeon',fontSize: 30, color: Colors.black),),
+            ),
+            ListTile(
+              title: Text('개인정보 취급방침', style: TextStyle(fontFamily: 'DoHyeon',fontSize: 15, color: Colors.black54),),
+              onTap: (){
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) {
+                    return Privacy();
+                  },
+                  fullscreenDialog: false,
+                ));
+              },
+            )
+          ],
+        ),
+      ),
+
       appBar: AppBar(
         automaticallyImplyLeading: true,
         titleSpacing: 10.0,

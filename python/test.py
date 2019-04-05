@@ -14,6 +14,7 @@ import re
 import random
 import os
 import traceback
+from datetime import datetime
 
 print('start')
 
@@ -152,7 +153,7 @@ def __upload_image_storage(href,title) :
     imageKey = hashlib.sha1(title.encode("utf-8")).hexdigest() + str(time.time())
 
     # 그리고 이미지 키에 따라서 저장한다.
-    blob = st.blob(imageKey)
+    blob = st.blob('parsed_content/' + imageKey)
 
     with open(outfile, 'rb') as my_file :
         blob.upload_from_file(my_file)
@@ -162,7 +163,7 @@ def __upload_image_storage(href,title) :
 # 사이트별 특화로직
 def fetch(site, br) :
 
-    timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M')
+    timestamp = datetime.now()
 
     content_candidate =[]
     result = []
@@ -310,9 +311,9 @@ def fetch(site, br) :
 
             text, image, storage_source = __get_content(site, href, title) # text 와 image의 링크 및 image source파일 (storage에 저장된거) 모두를 빼온다.
 
-            comment_count = str(i.find_element_by_class_name("main_list_comment").text)
-            result.append({'title' : title, 'href' : href, 'comment_count' : comment_count, 'site' :site, 'timestamp': timestamp, 'key' : key})
-            content.append({'key' : key, 'text' : text, 'image' : image , 'timestamp': timestamp, 'title':title, 'storage_source' : storage_source  }) # 이미지 텍스트 저장.
+
+            db.collection(u'posts_summary').document(title).create({'title' : title, 'href' : href, 'comment_count' : 0, 'site' :site, 'timestamp': timestamp, 'key' : key})
+            db.collection(u'posts_content').document(title).create({'key' : key, 'text' : text, 'image' : image , 'timestamp': timestamp, 'title':title, 'storage_source' : storage_source  })
 
         except:
             print("error:")
@@ -338,24 +339,6 @@ content_list = []
 
 for site in list :
     tup = fetch(site, br)
-    result_list = tup[0]
-    content_list = tup[1]
-
-shuffle(result_list)
-
-for post in result_list:
-    doc_ref = db.collection(u'posts_temp').document(post['title'])
-    try :
-        doc_ref.create(post)
-    except :
-        pass
-
-for content in content_list:
-    doc_ref = db.collection(u'posts_content').document(content['title'])
-    try :
-        doc_ref.create(content)
-    except :
-        pass
 
 br.quit()
 

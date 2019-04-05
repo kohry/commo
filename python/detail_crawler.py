@@ -243,7 +243,7 @@ def fetch(site, br) :
 
     if site == "MLB":
         br.implicitly_wait(5)
-        br.get('http://mlbpark.donga.com/mlbpark/b.php?b=bullpen')
+        br.get('http://mlbpark.donga.com/mlbpark/b.php?b=bullpen') # http://mlbpark.donga.com/mp/best.php?b=bullpen
         try:
             list = br.find_element_by_class_name("tbl_type01").find_elements_by_tag_name("tr")
         except:
@@ -312,7 +312,7 @@ def fetch(site, br) :
 
     if site == "YGOSU":
         br.implicitly_wait(3)
-        br.get('https://www.ygosu.com/community/real_article')
+        br.get('https://www.ygosu.com/community/real_article')   # https://m.ygosu.com/board/real_article
         try:
             list = br.find_element_by_class_name("bd_list").find_elements_by_class_name("tit")
         except:
@@ -357,7 +357,7 @@ def fetch(site, br) :
 
     if site == "DC":
         br.implicitly_wait(3)
-        br.get('http://gall.dcinside.com/board/lists/?id=hit')
+        br.get('http://gall.dcinside.com/board/lists/?id=hit') # https://m.dcinside.com/board/hit
         try:
             list = br.find_element_by_class_name("gall_list").find_elements_by_class_name("gall_tit")
         except:
@@ -382,7 +382,7 @@ def fetch(site, br) :
 
     if site == "TODAY":
         br.implicitly_wait(3)
-        br.get('http://www.todayhumor.co.kr/board/list.php?table=bestofbest')
+        br.get('http://www.todayhumor.co.kr/board/list.php?table=bestofbest') # http://m.todayhumor.co.kr/list.php?table=bestofbest
         try:
             list = br.find_elements_by_class_name("subject")
         except:
