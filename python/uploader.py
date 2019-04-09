@@ -34,6 +34,7 @@ def prepareWebDriver() :
 
     # br = webdriver.PhantomJS(executable_path=phantomjs_path, service_log_path=os.path.devnull)
     options = webdriver.ChromeOptions()
+    # options.add_argument('no-sandbox')
     options.add_argument('headless')
     br = webdriver.Chrome(executable_path=phantomjs_path, service_log_path=os.path.devnull, chrome_options=options)
     return br
@@ -51,9 +52,12 @@ br = prepareWebDriver()
 
 result_list = []
 
-for site in list :
-    for post in crawler.fetch(site,br) :
-        result_list.append(post)
+try:
+    for site in list :
+        for post in crawler.fetch(site,br) :
+            result_list.append(post)
+except:
+    pass
 
 shuffle(result_list)
 
