@@ -15,12 +15,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cloud_firestore: ^0.8.2
-  url_launcher: ^4.0.1
-  share: ^0.5.3
-  firebase_admob: ^0.6.1+1
-  sqflite: 0.12.2+1
-  path_provider: ^0.4.1
+  cloud_firestore: ^0.13.0+1
+  url_launcher: ^5.4.1
+  cloud_firestore_all: ^0.1.1+4
 
 
   # The following adds the Cupertino Icons font to your application.
